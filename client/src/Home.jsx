@@ -22,7 +22,7 @@ function Home(){
                 <img src={SettingsIcon} alt="Settings" className="settings-icon" />
                 {settingsOpen && (
                     <div className="settings-dropdown">
-                        <button className="settings-item" onClick={handleLogout}>🚪 Logout</button>
+                        <button className="settings-item" onClick={handleLogout}>Logout</button>
                     </div>
                 )}
             </div>
