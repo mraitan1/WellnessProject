@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "bootstrap": "^5.3.8",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.0",
+    "nodemon": "^3.1.14",
+    "pug": "^3.0.4",
+    "react-router-dom": "^7.13.1"
+  },
+  "name": "project",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "main": "server.js",
+  "devDependencies": {}
+}
