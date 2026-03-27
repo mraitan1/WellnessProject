@@ -1,14 +1,241 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+const workoutTypes = [
+    { label: "Cardio", emoji: "🏃" },
+    { label: "Weights", emoji: "🏋️" },
+    { label: "Yoga", emoji: "🧘" },
+    { label: "Swimming", emoji: "🏊" },
+    { label: "Cycling", emoji: "🚴" },
+    { label: "HIIT", emoji: "🔥" },
+    { label: "Sports", emoji: "⚽" },
+    { label: "Walking", emoji: "🚶" },
+    { label: "Pilates", emoji: "🤸" },
+    { label: "Other", emoji: "💪" },
+];
+
+const intensityOptions = [
+    { label: "Very Light", emoji: "🌱" },
+    { label: "Light", emoji: "😊" },
+    { label: "Moderate", emoji: "😤" },
+    { label: "Hard", emoji: "🥵" },
+    { label: "Max Effort", emoji: "💀" },
+];
 
 function WorkoutJournal() {
     const navigate = useNavigate();
 
+    const [selectedTypes, setSelectedTypes] = useState([]);
+    const [duration, setDuration] = useState("");
+    const [intensity, setIntensity] = useState(null);
+    const [notes, setNotes] = useState("");
+    const [entries, setEntries] = useState([]);
+    const [submitted, setSubmitted] = useState(false);
+
+    function toggleType(typeLabel) {
+        if (selectedTypes.includes(typeLabel)) {
+            setSelectedTypes(selectedTypes.filter(function(t) {
+                return t !== typeLabel;
+            }));
+        } else {
+            setSelectedTypes([...selectedTypes, typeLabel]);
+        }
+    }
+
+    function handleSubmit() {
+        if (selectedTypes.length === 0) {
+            alert("Please select at least one workout type!");
+            return;
+        }
+        if (!duration) {
+            alert("Please enter a duration!");
+            return;
+        }
+        if (!intensity) {
+            alert("Please select an intensity!");
+            return;
+        }
+
+        const today = new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+
+        const newEntry = {
+            date: today,
+            types: selectedTypes,
+            duration: duration,
+            intensity: intensity,
+            notes: notes,
+        };
+
+        setEntries([newEntry, ...entries]);
+        setSelectedTypes([]);
+        setDuration("");
+        setIntensity(null);
+        setNotes("");
+        setSubmitted(true);
+        setTimeout(function() {
+            setSubmitted(false);
+        }, 3000);
+    }
+
     return (
-        <div className="page-container">
-            <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
-            <h1 className="page-title">This is the Workout Journal page</h1>
-            <p className="page-subtitle">Your recent workout entries will appear here.</p>
+        <div className="home-container">
+            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
+                <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
+                <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Workout Journal</h1>
+                <p className="home-subtitle" style={{ marginBottom: 0 }}>Log your workout!</p>
+
+                {/* Workout Type */}
+                <div style={{ width: "100%" }}>
+                    <p className="login-label">Workout Type</p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
+                        {workoutTypes.map(function(type) {
+                            return (
+                                <div
+                                    key={type.label}
+                                    onClick={() => toggleType(type.label)}
+                                    style={{
+                                        cursor: "pointer",
+                                        padding: "10px 14px",
+                                        borderRadius: "14px",
+                                        background: selectedTypes.includes(type.label) ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.15)",
+                                        border: selectedTypes.includes(type.label) ? "2px solid white" : "2px solid transparent",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        gap: "4px",
+                                        transition: "all 0.2s",
+                                    }}
+                                >
+                                    <span style={{ fontSize: "1.8rem" }}>{type.emoji}</span>
+                                    <span style={{ color: "lightgoldenrodyellow", fontSize: "0.75rem", fontWeight: 700 }}>{type.label}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Duration */}
+                <div style={{ width: "100%" }}>
+                    <p className="login-label">Duration (minutes)</p>
+                    <input
+                        type="number"
+                        min="1"
+                        placeholder="e.g. 45"
+                        value={duration}
+                        onChange={(e) => setDuration(e.target.value)}
+                        className="login-input"
+                        style={{ width: "auto" }}
+                    />
+                </div>
+
+                {/* Intensity */}
+                <div style={{ width: "100%" }}>
+                    <p className="login-label">Intensity</p>
+                    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
+                        {intensityOptions.map(function(option) {
+                            return (
+                                <div
+                                    key={option.label}
+                                    onClick={() => setIntensity(option)}
+                                    style={{
+                                        cursor: "pointer",
+                                        padding: "10px 14px",
+                                        borderRadius: "14px",
+                                        background: intensity?.label === option.label ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.15)",
+                                        border: intensity?.label === option.label ? "2px solid white" : "2px solid transparent",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        gap: "4px",
+                                        transition: "all 0.2s",
+                                    }}
+                                >
+                                    <span style={{ fontSize: "1.8rem" }}>{option.emoji}</span>
+                                    <span style={{ color: "lightgoldenrodyellow", fontSize: "0.75rem", fontWeight: 700 }}>{option.label}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Notes */}
+                <div style={{ width: "100%" }}>
+                    <p className="login-label">Notes</p>
+                    <textarea
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="How did it go? Any PRs, struggles, or highlights..."
+                        rows={4}
+                        style={{
+                            width: "100%",
+                            padding: "12px",
+                            borderRadius: "12px",
+                            border: "none",
+                            background: "rgba(255,255,255,0.2)",
+                            color: "white",
+                            fontSize: "0.95rem",
+                            fontFamily: "Shrikhand, sans-serif",
+                            resize: "vertical",
+                            outline: "none",
+                            boxSizing: "border-box",
+                        }}
+                    />
+                </div>
+
+                <button className="login-btn" onClick={handleSubmit}>
+                    Save Entry
+                </button>
+                {submitted && (
+                    <p style={{ color: "lightgoldenrodyellow", fontWeight: 700 }}>✅ Entry saved!</p>
+                )}
+            </div>
+
+            {/* Past Entries */}
+            {entries.length > 0 && (
+                <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
+                    <h2 style={{ color: "lightgoldenrodyellow", fontFamily: "Shrikhand, sans-serif", textAlign: "center" }}>Past Entries</h2>
+                    {entries.map(function(entry, i) {
+                        return (
+                            <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
+                                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", margin: 0 }}>{entry.date}</p>
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                                    {entry.types.map(function(t) {
+                                        let found = null;
+                                        for (let i = 0; i < workoutTypes.length; i++) {
+                                            if (workoutTypes[i].label === t) {
+                                                found = workoutTypes[i];
+                                            }
+                                        }
+                                        return (
+                                            <span key={t} style={{
+                                                background: "rgba(255,255,255,0.2)",
+                                                color: "lightgoldenrodyellow",
+                                                padding: "4px 12px",
+                                                borderRadius: "20px",
+                                                fontSize: "0.85rem",
+                                                fontWeight: 700,
+                                            }}>
+                                                {found ? found.emoji : ""} {t}
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                                <p style={{ color: "rgba(255,255,255,0.85)", margin: 0, fontSize: "0.9rem" }}>
+                                    ⏱️ {entry.duration} mins &nbsp;|&nbsp; {entry.intensity.emoji} {entry.intensity.label}
+                                </p>
+                                {entry.notes && (
+                                    <p style={{ color: "white", margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.notes}</p>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
