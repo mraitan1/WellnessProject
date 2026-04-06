@@ -193,7 +193,7 @@ function DailyJournal() {
                             background: "rgba(255,255,255,0.2)",
                             color: "white",
                             fontSize: "0.95rem",
-                            fontFamily: "Shrikhand, sans-serif",
+                            fontFamily: "arial, sans-serif",
                             resize: "vertical",
                             outline: "none",
                             boxSizing: "border-box",
@@ -212,7 +212,7 @@ function DailyJournal() {
             {/* Past Entries */}
             {entries.length > 0 && (
                 <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
-                    <h2 style={{ color: "lightgoldenrodyellow", fontFamily: "Shrikhand, sans-serif", textAlign: "center" }}>Past Entries</h2>
+                    <h2 style={{ color: "lightgoldenrodyellow", fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
