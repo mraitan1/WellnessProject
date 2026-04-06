@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Profile() {
+function Profile({setTheme, theme}) {
     const navigate = useNavigate();
 
     const [name, setName] = useState("Your Name");
@@ -52,6 +52,10 @@ function Profile() {
         setTempName(name);
         setTempEmail(email);
         setEditing(true);
+    }
+
+    function handleThemeChange(e) {
+        setTheme(e.target.value);
     }
 
     return (
@@ -150,6 +154,12 @@ function Profile() {
                             <button className="login-btn" onClick={handleEditClick} style={{ marginTop: "8px" }}>
                                 ✏️ Edit Profile
                             </button>
+                            <select className="theme-switcher" style={{ marginTop: "8px" }} onChange={handleThemeChange} value={theme}>
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="forest">Forest</option>
+                                <option value="sky">Sky</option>
+                            </select>
                         </div>
                     )}
                     {saved && (

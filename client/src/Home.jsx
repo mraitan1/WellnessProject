@@ -11,9 +11,16 @@ const navItems = [
  
 function Home() {
     const navigate = useNavigate();
- 
+
+    function handleLogout() {
+        navigate("/login");
+    }
+
     return (
         <div className="home-container">
+            <button className="logout-btn" onClick={handleLogout}>
+                Logout
+            </button>
             <div className="home-card">
                 <h1 className="home-title">Welcome to DayByDay</h1>
                 <p className="home-subtitle">What would you like to track today?</p>
