@@ -159,6 +159,7 @@ function Profile({setTheme, theme}) {
                                 <option value="dark">Dark</option>
                                 <option value="forest">Forest</option>
                                 <option value="sky">Sky</option>
+                                <option value="retro">Retro</option>
                             </select>
                         </div>
                     )}
