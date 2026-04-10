@@ -112,7 +112,7 @@ function WorkoutJournal() {
                                     }}
                                 >
                                     <span style={{ fontSize: "1.8rem" }}>{type.emoji}</span>
-                                    <span style={{ color: "lightgoldenrodyellow", fontSize: "0.75rem", fontWeight: 700 }}>{type.label}</span>
+                                    <span className="journal-label">{type.label}</span>
                                 </div>
                             );
                         })}
@@ -156,7 +156,7 @@ function WorkoutJournal() {
                                     }}
                                 >
                                     <span style={{ fontSize: "1.8rem" }}>{option.emoji}</span>
-                                    <span style={{ color: "lightgoldenrodyellow", fontSize: "0.75rem", fontWeight: 700 }}>{option.label}</span>
+                                    <span className="journal-label">{option.label}</span>
                                 </div>
                             );
                         })}
@@ -171,15 +171,15 @@ function WorkoutJournal() {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="How did it go? Any PRs, struggles, or highlights..."
                         rows={4}
+                        className="text-color"
                         style={{
                             width: "100%",
                             padding: "12px",
                             borderRadius: "12px",
                             border: "none",
                             background: "rgba(255,255,255,0.2)",
-                            color: "white",
                             fontSize: "0.95rem",
-                            fontFamily: "Shrikhand, sans-serif",
+                            fontFamily: "arial, sans-serif",
                             resize: "vertical",
                             outline: "none",
                             boxSizing: "border-box",
@@ -191,14 +191,14 @@ function WorkoutJournal() {
                     Save Entry
                 </button>
                 {submitted && (
-                    <p style={{ color: "lightgoldenrodyellow", fontWeight: 700 }}>✅ Entry saved!</p>
+                    <p className="text-color" style={{ fontWeight: 700 }}>✅ Entry saved!</p>
                 )}
             </div>
 
             {/* Past Entries */}
             {entries.length > 0 && (
                 <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
-                    <h2 style={{ color: "lightgoldenrodyellow", fontFamily: "Shrikhand, sans-serif", textAlign: "center" }}>Past Entries</h2>
+                    <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
@@ -212,9 +212,8 @@ function WorkoutJournal() {
                                             }
                                         }
                                         return (
-                                            <span key={t} style={{
+                                            <span key={t} className="text-color" style={{
                                                 background: "rgba(255,255,255,0.2)",
-                                                color: "lightgoldenrodyellow",
                                                 padding: "4px 12px",
                                                 borderRadius: "20px",
                                                 fontSize: "0.85rem",
@@ -229,7 +228,7 @@ function WorkoutJournal() {
                                     ⏱️ {entry.duration} mins &nbsp;|&nbsp; {entry.intensity.emoji} {entry.intensity.label}
                                 </p>
                                 {entry.notes && (
-                                    <p style={{ color: "white", margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.notes}</p>
+                                    <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.notes}</p>
                                 )}
                             </div>
                         );

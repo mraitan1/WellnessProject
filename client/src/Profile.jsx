@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Profile() {
+function Profile({setTheme, theme}) {
     const navigate = useNavigate();
 
     const [name, setName] = useState("Your Name");
@@ -54,6 +54,10 @@ function Profile() {
         setEditing(true);
     }
 
+    function handleThemeChange(e) {
+        setTheme(e.target.value);
+    }
+
     return (
         <div className="home-container">
             <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
@@ -90,7 +94,7 @@ function Profile() {
                         onChange={handleImageChange}
                         style={{ display: "none" }}
                     />
-                    <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8rem", margin: 0 }}>
+                    <p className="profile-label">
                         Click to change photo
                     </p>
                 </div>
@@ -140,20 +144,27 @@ function Profile() {
                             gap: "10px",
                         }}>
                             <div>
-                                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", margin: 0 }}>Name</p>
-                                <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>{name}</p>
+                                <p className="profile-label">Name: </p>
+                                <p className="journal-entry">{name}</p>
                             </div>
                             <div>
-                                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", margin: 0 }}>Email</p>
-                                <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1rem", margin: 0 }}>{email}</p>
+                                <p className="profile-label">Email:</p>
+                                <p className="journal-entry">{email}</p>
                             </div>
                             <button className="login-btn" onClick={handleEditClick} style={{ marginTop: "8px" }}>
                                 ✏️ Edit Profile
                             </button>
+                            <select className="theme-switcher" style={{ marginTop: "8px" }} onChange={handleThemeChange} value={theme}>
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="forest">Forest</option>
+                                <option value="sky">Sky</option>
+                                <option value="retro">Retro</option>
+                            </select>
                         </div>
                     )}
                     {saved && (
-                        <p style={{ color: "lightgoldenrodyellow", fontWeight: 700, textAlign: "center", marginTop: "8px" }}>✅ Profile saved!</p>
+                        <p className="profile-update">✅ Profile saved!</p>
                     )}
                 </div>
 
@@ -173,8 +184,8 @@ function Profile() {
                                     gap: "6px",
                                 }}>
                                     <span style={{ fontSize: "1.8rem" }}>{stat.emoji}</span>
-                                    <span style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.5rem" }}>{stat.count}</span>
-                                    <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.8rem", textAlign: "center", fontWeight: 700 }}>{stat.label}</span>
+                                    <span className="journal-entry" style={{ fontSize: "1.5rem" }}>{stat.count}</span>
+                                    <span className="nav-card-desc" >{stat.label}</span>
                                 </div>
                             );
                         })}

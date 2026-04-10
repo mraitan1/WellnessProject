@@ -24,7 +24,7 @@ function Login() {
                 setError(result.data);
             }
         } catch (err) {
-            setError("Could not connect to the server. Make sure it is running.");
+            setError("Could not connect to the server.");
         } finally {
             setLoading(false);
         }
