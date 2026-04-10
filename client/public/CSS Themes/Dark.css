@@ -269,3 +269,41 @@
 .theme-option {
     border-radius: 12px;
 }
+
+.journal-entry {
+    color: var(--text-color);
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.journal-label {
+    color: var(--text-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.profile-update {
+    color: var(--text-color);
+    font-weight: 700;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.profile-label {
+    color: var(--text-color);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.text-color {
+    color: var(--text-color);
+}
+
+::placeholder {
+    color: var(--text-color);
+}
+
+::-webkit-input-placeholder {
+    color: var(--text-color);
+}

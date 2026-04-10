@@ -107,7 +107,7 @@ function DailyJournal() {
                                     }}
                                 >
                                     <span style={{ fontSize: "1.8rem" }}>{mood.emoji}</span>
-                                    <span style={{ color: "lightgoldenrodyellow", fontSize: "0.75rem", fontWeight: 700 }}>{mood.label}</span>
+                                    <span className="journal-label">{mood.label}</span>
                                 </div>
                             );
                         })}
@@ -123,6 +123,7 @@ function DailyJournal() {
                                 <div
                                     key={n}
                                     onClick={() => setRestedRating(n)}
+                                    className="text-color"
                                     style={{
                                         cursor: "pointer",
                                         width: "44px",
@@ -133,7 +134,6 @@ function DailyJournal() {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        color: "lightgoldenrodyellow",
                                         fontWeight: 800,
                                         fontSize: "1rem",
                                         transition: "all 0.2s",
@@ -144,7 +144,7 @@ function DailyJournal() {
                             );
                         })}
                     </div>
-                    <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8rem", textAlign: "center", marginTop: "6px" }}>
+                    <p style={{textAlign: "center", marginTop: "6px" }} className="profile-label">
                         1 = Exhausted &nbsp;|&nbsp; 5 = Well Rested
                     </p>
                 </div>
@@ -158,13 +158,13 @@ function DailyJournal() {
                                 <div
                                     key={activity}
                                     onClick={() => toggleActivity(activity)}
+                                    className="text-color"
                                     style={{
                                         cursor: "pointer",
                                         padding: "8px 16px",
                                         borderRadius: "20px",
                                         background: selectedActivities.includes(activity) ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.15)",
                                         border: selectedActivities.includes(activity) ? "2px solid white" : "2px solid transparent",
-                                        color: "lightgoldenrodyellow",
                                         fontWeight: 700,
                                         fontSize: "0.85rem",
                                         transition: "all 0.2s",
@@ -185,13 +185,13 @@ function DailyJournal() {
                         onChange={(e) => setJournalText(e.target.value)}
                         placeholder="What's on your mind?"
                         rows={5}
+                        className="text-color"
                         style={{
                             width: "100%",
                             padding: "12px",
                             borderRadius: "12px",
                             border: "none",
                             background: "rgba(255,255,255,0.2)",
-                            color: "white",
                             fontSize: "0.95rem",
                             fontFamily: "arial, sans-serif",
                             resize: "vertical",
@@ -205,23 +205,23 @@ function DailyJournal() {
                     Save Entry
                 </button>
                 {submitted && (
-                    <p style={{ color: "lightgoldenrodyellow", fontWeight: 700 }}>✅ Entry saved!</p>
+                    <p className="text-color" style={{fontWeight: 700 }}>✅ Entry saved!</p>
                 )}
             </div>
 
             {/* Past Entries */}
             {entries.length > 0 && (
                 <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
-                    <h2 style={{ color: "lightgoldenrodyellow", fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
+                    <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
-                                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", margin: 0 }}>{entry.date}</p>
-                                <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>
+                                <p className="profile-label">{entry.date}</p>
+                                <p className="journal-entry">
                                     {entry.mood.emoji} {entry.mood.label}
                                 </p>
                                 {entry.rested && (
-                                    <p style={{ color: "rgba(255,255,255,0.85)", margin: 0, fontSize: "0.9rem" }}>
+                                    <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                         😴 Rested: {entry.rested}/5
                                     </p>
                                 )}
@@ -229,9 +229,8 @@ function DailyJournal() {
                                     <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                                         {entry.activities.map(function(a) {
                                             return (
-                                                <span key={a} style={{
+                                                <span key={a} className="text-color" style={{
                                                     background: "rgba(255,255,255,0.2)",
-                                                    color: "lightgoldenrodyellow",
                                                     padding: "4px 12px",
                                                     borderRadius: "20px",
                                                     fontSize: "0.8rem",
@@ -242,7 +241,7 @@ function DailyJournal() {
                                     </div>
                                 )}
                                 {entry.text && (
-                                    <p style={{ color: "white", margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.text}</p>
+                                    <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.text}</p>
                                 )}
                             </div>
                         );

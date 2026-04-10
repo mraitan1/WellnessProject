@@ -144,9 +144,8 @@ function PersonalGrowth() {
                                             onChange={() => toggleGoal(i)}
                                             style={{ width: "18px", height: "18px", cursor: "pointer" }}
                                         />
-                                        <span style={{
+                                        <span className="text-color" style={{
                                             flex: 1,
-                                            color: "lightgoldenrodyellow",
                                             fontWeight: 700,
                                             textDecoration: goal.done ? "line-through" : "none",
                                             opacity: goal.done ? 0.6 : 1,
@@ -175,13 +174,13 @@ function PersonalGrowth() {
                                 <div
                                     key={habit}
                                     onClick={() => toggleHabit(habit)}
+                                    className="text-color"
                                     style={{
                                         cursor: "pointer",
                                         padding: "8px 16px",
                                         borderRadius: "20px",
                                         background: checkedHabits.includes(habit) ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.15)",
                                         border: checkedHabits.includes(habit) ? "2px solid white" : "2px solid transparent",
-                                        color: "lightgoldenrodyellow",
                                         fontWeight: 700,
                                         fontSize: "0.85rem",
                                         transition: "all 0.2s",
@@ -217,7 +216,7 @@ function PersonalGrowth() {
                                     }}
                                 >
                                     <span style={{ fontSize: "1.8rem" }}>{option.emoji}</span>
-                                    <span style={{ color: "lightgoldenrodyellow", fontSize: "0.75rem", fontWeight: 700, textAlign: "center" }}>{option.label}</span>
+                                    <span className="text-color" style={{ fontSize: "0.75rem", fontWeight: 700, textAlign: "center" }}>{option.label}</span>
                                 </div>
                             );
                         })}
@@ -232,13 +231,13 @@ function PersonalGrowth() {
                         onChange={(e) => setMotivationalNote(e.target.value)}
                         placeholder="Write something to motivate yourself..."
                         rows={4}
+                        className="text-color"
                         style={{
                             width: "100%",
                             padding: "12px",
                             borderRadius: "12px",
                             border: "none",
                             background: "rgba(255,255,255,0.2)",
-                            color: "white",
                             fontSize: "0.95rem",
                             fontFamily: "arial, sans-serif",
                             resize: "vertical",
@@ -252,25 +251,25 @@ function PersonalGrowth() {
                     Save Entry
                 </button>
                 {submitted && (
-                    <p style={{ color: "lightgoldenrodyellow", fontWeight: 700 }}>✅ Entry saved!</p>
+                    <p className="text-color" style={{ fontWeight: 700 }}>✅ Entry saved!</p>
                 )}
             </div>
 
             {/* Past Entries */}
             {entries.length > 0 && (
                 <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
-                    <h2 style={{ color: "lightgoldenrodyellow", fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
+                    <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
                                 <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", margin: 0 }}>{entry.date}</p>
-                                <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.1rem", margin: 0 }}>
+                                <p className="text-color" style={{ fontWeight: 800, fontSize: "1.1rem", margin: 0 }}>
                                     {entry.progress.emoji} {entry.progress.label}
                                 </p>
                                 <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%" }}>
                                     {entry.goals.map(function(g, j) {
                                         return (
-                                            <p key={j} style={{ color: "white", margin: 0, fontSize: "0.9rem" }}>
+                                            <p key={j} className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                                 {g.done ? "✅" : "⬜"} {g.text}
                                             </p>
                                         );
@@ -280,9 +279,8 @@ function PersonalGrowth() {
                                     <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                                         {entry.habits.map(function(h) {
                                             return (
-                                                <span key={h} style={{
+                                                <span key={h} className="text-color" style={{
                                                     background: "rgba(255,255,255,0.2)",
-                                                    color: "lightgoldenrodyellow",
                                                     padding: "4px 12px",
                                                     borderRadius: "20px",
                                                     fontSize: "0.8rem",
@@ -295,7 +293,7 @@ function PersonalGrowth() {
                                     </div>
                                 )}
                                 {entry.note && (
-                                    <p style={{ color: "white", margin: 0, fontSize: "0.95rem", lineHeight: "1.5", fontStyle: "italic" }}>
+                                    <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5", fontStyle: "italic" }}>
                                         "{entry.note}"
                                     </p>
                                 )}

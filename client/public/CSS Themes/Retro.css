@@ -6,6 +6,7 @@ html, body {
 
 body {
     --text-color: lightgoldenrodyellow;
+    --button-text: #142e60;
     background-image: linear-gradient(to right top, #feb47b, indianred, mediumpurple, royalblue);
     background-repeat: no-repeat;
     background-size: cover;
@@ -30,6 +31,10 @@ body {
 .flex-child:first-child {
     max-width: 45%;
     margin-left: 60px;
+}
+
+.text-color {
+    color: var(--text-color);
 }
 
 .logo-img {
@@ -268,4 +273,43 @@ body {
 
 .theme-switcher option {
     background: #aa6bf5;
+}
+
+
+.journal-entry {
+    color: var(--text-color);
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.journal-label {
+    color: var(--text-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.profile-update {
+    color: var(--text-color);
+    font-weight: 700;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.profile-label {
+    color: var(--text-color);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.text-color {
+    color: var(--text-color);
+}
+
+::placeholder {
+    color: var(--text-color);
+}
+
+::-webkit-input-placeholder {
+    color: var(--text-color);
 }

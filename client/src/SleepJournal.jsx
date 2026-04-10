@@ -125,7 +125,7 @@ function SleepJournal() {
                         padding: "14px 20px",
                         textAlign: "center",
                     }}>
-                        <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>
+                        <p className="journal-entry">
                             😴 Total Sleep: {duration}
                         </p>
                     </div>
@@ -140,6 +140,7 @@ function SleepJournal() {
                                 <div
                                     key={q.label}
                                     onClick={() => setQuality(q)}
+                                    className="text-color"
                                     style={{
                                         cursor: "pointer",
                                         padding: "10px 14px",
@@ -154,7 +155,7 @@ function SleepJournal() {
                                     }}
                                 >
                                     <span style={{ fontSize: "1.8rem" }}>{q.emoji}</span>
-                                    <span style={{ color: "lightgoldenrodyellow", fontSize: "0.75rem", fontWeight: 700 }}>{q.label}</span>
+                                    <span className="journal-label">{q.label}</span>
                                 </div>
                             );
                         })}
@@ -169,13 +170,13 @@ function SleepJournal() {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Any thoughts before bed, dreams, or things that affected your sleep..."
                         rows={4}
+                        className="text-color"
                         style={{
                             width: "100%",
                             padding: "12px",
                             borderRadius: "12px",
                             border: "none",
                             background: "rgba(255,255,255,0.2)",
-                            color: "white",
                             fontSize: "0.95rem",
                             fontFamily: "arial, sans-serif",
                             resize: "vertical",
@@ -189,26 +190,26 @@ function SleepJournal() {
                     Save Entry
                 </button>
                 {submitted && (
-                    <p style={{ color: "lightgoldenrodyellow", fontWeight: 700 }}>✅ Entry saved!</p>
+                    <p className="text-color" style={{ fontWeight: 700 }}>✅ Entry saved!</p>
                 )}
             </div>
 
             {/* Past Entries */}
             {entries.length > 0 && (
                 <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
-                    <h2 style={{ color: "lightgoldenrodyellow", fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
+                    <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
                                 <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", margin: 0 }}>{entry.date}</p>
-                                <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>
+                                <p className="journal-entry">
                                     {entry.quality.emoji} {entry.quality.label} Sleep
                                 </p>
-                                <p style={{ color: "rgba(255,255,255,0.85)", margin: 0, fontSize: "0.9rem" }}>
+                                <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                     🛏️ {entry.bedtime} → ⏰ {entry.waketime} &nbsp;|&nbsp; 😴 {entry.duration}
                                 </p>
                                 {entry.notes && (
-                                    <p style={{ color: "white", margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.notes}</p>
+                                    <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.notes}</p>
                                 )}
                             </div>
                         );

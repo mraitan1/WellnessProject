@@ -94,7 +94,7 @@ function Profile({setTheme, theme}) {
                         onChange={handleImageChange}
                         style={{ display: "none" }}
                     />
-                    <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8rem", margin: 0 }}>
+                    <p className="profile-label">
                         Click to change photo
                     </p>
                 </div>
@@ -144,12 +144,12 @@ function Profile({setTheme, theme}) {
                             gap: "10px",
                         }}>
                             <div>
-                                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", margin: 0 }}>Name</p>
-                                <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.2rem", margin: 0 }}>{name}</p>
+                                <p className="profile-label">Name: </p>
+                                <p className="journal-entry">{name}</p>
                             </div>
                             <div>
-                                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", margin: 0 }}>Email</p>
-                                <p style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1rem", margin: 0 }}>{email}</p>
+                                <p className="profile-label">Email:</p>
+                                <p className="journal-entry">{email}</p>
                             </div>
                             <button className="login-btn" onClick={handleEditClick} style={{ marginTop: "8px" }}>
                                 ✏️ Edit Profile
@@ -164,7 +164,7 @@ function Profile({setTheme, theme}) {
                         </div>
                     )}
                     {saved && (
-                        <p style={{ color: "lightgoldenrodyellow", fontWeight: 700, textAlign: "center", marginTop: "8px" }}>✅ Profile saved!</p>
+                        <p className="profile-update">✅ Profile saved!</p>
                     )}
                 </div>
 
@@ -184,8 +184,8 @@ function Profile({setTheme, theme}) {
                                     gap: "6px",
                                 }}>
                                     <span style={{ fontSize: "1.8rem" }}>{stat.emoji}</span>
-                                    <span style={{ color: "lightgoldenrodyellow", fontWeight: 800, fontSize: "1.5rem" }}>{stat.count}</span>
-                                    <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.8rem", textAlign: "center", fontWeight: 700 }}>{stat.label}</span>
+                                    <span className="journal-entry" style={{ fontSize: "1.5rem" }}>{stat.count}</span>
+                                    <span className="nav-card-desc" >{stat.label}</span>
                                 </div>
                             );
                         })}
