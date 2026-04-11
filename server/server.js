@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
-
+// Test
 console.log(process.env.MONGO_URI)
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connection established'))
