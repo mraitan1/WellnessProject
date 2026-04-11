@@ -10,7 +10,7 @@ const qualityOptions = [
 ];
 
 const restfulOptions = [
-    { label: "Exhausted",  },
+    { label: "Exhausted", emoji: "😵" },
     { label: "Sleepy", emoji: "😞" },
     { label: "Rested", emoji: "😊" },
     { label: "Well Rested", emoji: "🌟" },
