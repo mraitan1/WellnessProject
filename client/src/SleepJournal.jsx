@@ -9,6 +9,13 @@ const qualityOptions = [
     { label: "Great", emoji: "🌟" },
 ];
 
+const restfulOptions = [
+    { label: "Exhausted", emoji: "😵" },
+    { label: "Sleepy", emoji: "😞" },
+    { label: "Rested", emoji: "😊" },
+    { label: "Well Rested", emoji: "🌟" },
+];
+
 function calculateDuration(bedtime, waketime) {
     if (!bedtime || !waketime) {
         return null;
@@ -42,6 +49,7 @@ function SleepJournal() {
     const [bedtime, setBedtime] = useState("");
     const [waketime, setWaketime] = useState("");
     const [quality, setQuality] = useState(null);
+    const [restfulness, setRestfulness] = useState(2);
     const [notes, setNotes] = useState("");
     const [entries, setEntries] = useState([]);
     const [submitted, setSubmitted] = useState(false);
@@ -71,6 +79,7 @@ function SleepJournal() {
             waketime: waketime,
             duration: duration,
             quality: quality,
+            restfulness: restfulness,
             notes: notes,
         };
 
@@ -162,8 +171,45 @@ function SleepJournal() {
                     </div>
                 </div>
 
-                {/* Notes */}
+                {/* Restful */}
                 <div style={{ width: "100%" }}>
+                    <p className="login-label">Restfulness</p>
+
+                    <div style={{ textAlign: "center", marginBottom: "8px" }}>
+                        <span style={{ fontSize: "1.8rem" }}>
+                            {restfulOptions[restfulness].emoji}
+                        </span>
+                        <span
+                            className="journal-label"
+                            style={{ marginLeft: "8px" }}
+                        >
+                            {restfulOptions[restfulness].label}
+                        </span>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span className="journal-label">
+                            {restfulOptions[0].label}
+                        </span>
+
+                        <input
+                            type="range"
+                            min={0}
+                            max={restfulOptions.length - 1}
+                            step={1}
+                            value={restfulness}
+                            onChange={(e) => setRestfulness(Number(e.target.value))}
+                            style={{ width: "100%" }}
+                        />
+
+                        <span className="journal-label">
+                            {restfulOptions[restfulOptions.length - 1].label}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Notes */}
+                <div style={{width: "100%"}}>
                     <p className="login-label">Notes</p>
                     <textarea
                         value={notes}
