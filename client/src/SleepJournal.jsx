@@ -88,7 +88,10 @@ function SleepJournal() {
     return (
         <div className="home-container">
             <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
-                <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
+                <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                    <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
+                    <button className="back-btn" onClick={() => navigate("/sleep/calendar")}>📅 View Calendar</button>
+                </div>
                 <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Sleep Journal</h1>
                 <p className="home-subtitle" style={{ marginBottom: 0 }}>How did you sleep?</p>
 
