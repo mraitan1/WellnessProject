@@ -8,6 +8,9 @@ import WorkoutJournal from './WorkoutJournal.jsx'
 import PersonalGrowth from './PersonalGrowth.jsx'
 import Profile from './Profile.jsx'
 import themes from './Themes.jsx'
+import DailyJournalCalendar from './DailyJournalCalendar.jsx'
+import SleepJournalCalendar from './SleepJournalCalendar.jsx'
+import WorkoutJournalCalendar from './WorkoutJournalCalendar.jsx'
 import {useEffect, useState} from "react";
 
 function App() {
@@ -44,6 +47,9 @@ function App() {
             <Route path='/workout' element={<WorkoutJournal />} />
             <Route path='/growth' element={<PersonalGrowth />} />
             <Route path='/profile' element={<Profile setTheme={setTheme} theme={theme} />} />
+            <Route path='/journal/calendar' element={<DailyJournalCalendar />} />
+            <Route path='/sleep/calendar' element={<SleepJournalCalendar />} />
+            <Route path='/workout/calendar' element={<WorkoutJournalCalendar />} />
         </Routes>
     )
 }
