@@ -2,6 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const UserModel = require('./models/User');
+const DailyJournalModel = require('./models/DailyJournal');
+const SleepJournalModel = require('./models/SleepJournal');
+const WorkoutJournalModel = require('./models/WorkoutJournal');
+const PersonalGrowthModel = require('./models/PersonalGrowth');
 require('dotenv').config();
 
 const app = express();
@@ -9,23 +13,24 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
-// Test
+
 console.log(process.env.MONGO_URI)
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connection established'))
     .catch(err => console.log(err));
 
+// ── Auth ──────────────────────────────────────────────────────
 app.post('/login', (req, res) => {
     const {email, password} = req.body;
-    UserModel.findOne({email : email})
+    UserModel.findOne({email: email})
     .then(user => {
         if (user) {
             if (user.password === password) {
                 res.json('Successful login');
-            }else{
+            } else {
                 res.json('Incorrect password');
             }
-        }else{
+        } else {
             res.json('No account found for this email');
         }
     })
@@ -37,6 +42,71 @@ app.post('/signup', (req, res) => {
     .catch(err => res.json(err))
 })
 
-app.listen(port, () =>{
-  console.log('Server running on port: ' + port);
+// ── Daily Journal ─────────────────────────────────────────────
+// Save a new daily journal entry
+app.post('/journal', (req, res) => {
+    DailyJournalModel.create(req.body)
+    .then(entry => res.json(entry))
+    .catch(err => res.json(err))
+})
+
+// Get all daily journal entries for a user
+app.get('/journal/:userId', (req, res) => {
+    DailyJournalModel.find({userId: req.params.userId})
+    .sort({date: -1})
+    .then(entries => res.json(entries))
+    .catch(err => res.json(err))
+})
+
+// ── Sleep Journal ─────────────────────────────────────────────
+// Save a new sleep journal entry
+app.post('/sleep', (req, res) => {
+    SleepJournalModel.create(req.body)
+    .then(entry => res.json(entry))
+    .catch(err => res.json(err))
+})
+
+// Get all sleep journal entries for a user
+app.get('/sleep/:userId', (req, res) => {
+    SleepJournalModel.find({userId: req.params.userId})
+    .sort({date: -1})
+    .then(entries => res.json(entries))
+    .catch(err => res.json(err))
+})
+
+// ── Workout Journal ───────────────────────────────────────────
+// Save a new workout journal entry
+app.post('/workout', (req, res) => {
+    WorkoutJournalModel.create(req.body)
+    .then(entry => res.json(entry))
+    .catch(err => res.json(err))
+})
+
+// Get all workout journal entries for a user
+app.get('/workout/:userId', (req, res) => {
+    WorkoutJournalModel.find({userId: req.params.userId})
+    .sort({date: -1})
+    .then(entries => res.json(entries))
+    .catch(err => res.json(err))
+})
+
+// ── Personal Growth ───────────────────────────────────────────
+// Save a new personal growth entry
+app.post('/growth', (req, res) => {
+    PersonalGrowthModel.create(req.body)
+    .then(entry => res.json(entry))
+    .catch(err => res.json(err))
+})
+
+// Get all personal growth entries for a user
+app.get('/growth/:userId', (req, res) => {
+    PersonalGrowthModel.find({userId: req.params.userId})
+    .sort({date: -1})
+    .then(entries => res.json(entries))
+    .catch(err => res.json(err))
+})
+
+// ─────────────────────────────────────────────────────────────
+app.listen(port, () => {
+    console.log('Server running on port: ' + port);
 });
