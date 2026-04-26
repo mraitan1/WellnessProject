@@ -26,19 +26,20 @@ app.post('/login', (req, res) => {
     .then(user => {
         if (user) {
             if (user.password === password) {
-                res.json('Successful login');
+                // Send back both a status AND the user's ID and name
+                res.json({status: 'Successful login', userId: user._id, name: user.name})
             } else {
-                res.json('Incorrect password');
+                res.json({status: 'Incorrect password'})
             }
         } else {
-            res.json('No account found for this email');
+            res.json({status: 'No account found for this email'})
         }
     })
 })
 
 app.post('/signup', (req, res) => {
     UserModel.create(req.body)
-    .then(user => {res.json("Success")})
+    .then(user => res.json({status: "Success", userId: user._id, name: user.name}))
     .catch(err => res.json(err))
 })
 
