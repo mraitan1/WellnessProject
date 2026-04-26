@@ -21,6 +21,13 @@ const moods = [
     { label: "Calm", emoji: "😌" },
 ];
 
+const restfulOptions = [
+    { label: "Exhausted", emoji: "😵" },
+    { label: "Sleepy", emoji: "😞" },
+    { label: "Rested", emoji: "😊" },
+    { label: "Well Rested", emoji: "🌟" },
+];
+
 const activities = [
     "School", "Work", "Studying", "Working Out",
     "Hiking", "Friends", "Alone Time", "Movie", "Hobbies"
@@ -31,7 +38,7 @@ function DailyJournal() {
 
     const [selectedMood, setSelectedMood] = useState(null);
     const [selectedActivities, setSelectedActivities] = useState([]);
-    const [restedRating, setRestedRating] = useState(null);
+    const [restfulness, setRestfulness] = useState(2);
     const [journalText, setJournalText] = useState("");
     const [entries, setEntries] = useState([]);
     const [submitted, setSubmitted] = useState(false);
@@ -87,6 +94,22 @@ function DailyJournal() {
             setTimeout(function() { setSubmitted(false); }, 3000);
         })
         .catch(err => console.log(err))
+            date: today,
+            mood: selectedMood,
+            activities: selectedActivities,
+            restfulness: restfulness,
+            text: journalText,
+        };
+
+        setEntries([newEntry, ...entries]);
+        setSelectedMood(null);
+        setSelectedActivities([]);
+        setRestfulness(2);
+        setJournalText("");
+        setSubmitted(true);
+        setTimeout(function() {
+            setSubmitted(false);
+        }, 3000);
     }
 
     return (
@@ -126,39 +149,41 @@ function DailyJournal() {
                     </div>
                 </div>
 
-                {/* Rested Rating */}
+                {/* Restful */}
                 <div style={{ width: "100%" }}>
-                    <p className="login-label">How rested do you feel?</p>
-                    <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                        {[1, 2, 3, 4, 5].map(function(n) {
-                            return (
-                                <div
-                                    key={n}
-                                    onClick={() => setRestedRating(n)}
-                                    className="text-color"
-                                    style={{
-                                        cursor: "pointer",
-                                        width: "44px",
-                                        height: "44px",
-                                        borderRadius: "50%",
-                                        background: restedRating === n ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.15)",
-                                        border: restedRating === n ? "2px solid white" : "2px solid transparent",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontWeight: 800,
-                                        fontSize: "1rem",
-                                        transition: "all 0.2s",
-                                    }}
-                                >
-                                    {n}
-                                </div>
-                            );
-                        })}
+                    <p className="login-label">Restfulness</p>
+
+                    <div style={{ textAlign: "center", marginBottom: "8px" }}>
+                        <span style={{ fontSize: "1.8rem" }}>
+                            {restfulOptions[restfulness].emoji}
+                        </span>
+                        <span
+                            className="journal-label"
+                            style={{ marginLeft: "8px" }}
+                        >
+                            {restfulOptions[restfulness].label}
+                        </span>
                     </div>
-                    <p style={{textAlign: "center", marginTop: "6px" }} className="profile-label">
-                        1 = Exhausted &nbsp;|&nbsp; 5 = Well Rested
-                    </p>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span className="journal-label">
+                            {restfulOptions[0].label}
+                        </span>
+
+                        <input
+                            type="range"
+                            min={0}
+                            max={restfulOptions.length - 1}
+                            step={1}
+                            value={restfulness}
+                            onChange={(e) => setRestfulness(Number(e.target.value))}
+                            style={{ width: "100%" }}
+                        />
+
+                        <span className="journal-label">
+                            {restfulOptions[restfulOptions.length - 1].label}
+                        </span>
+                    </div>
                 </div>
 
                 {/* Activity Tags */}
@@ -242,6 +267,9 @@ function DailyJournal() {
                                 {entry.restedRating && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                         😴 Rested: {entry.restedRating}/5
+                                {typeof entry.restfulness === "number" && (
+                                    <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
+                                        😴 Restfulness: {restfulOptions[entry.restfulness].emoji} {restfulOptions[entry.restfulness].label}
                                     </p>
                                 )}
                                 {entry.activities && entry.activities.length > 0 && (
