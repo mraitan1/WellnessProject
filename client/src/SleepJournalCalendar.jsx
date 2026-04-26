@@ -1,41 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S"];
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-function getSleepColor(hours) {
-    if (hours >= 7) return "#5cb85c";
-    if (hours >= 5) return "#f0ad4e";
-    return "#d9534f";
-}
+const qualityOptions = [
+    { label: "Terrible", emoji: "😵" }, { label: "Poor", emoji: "😞" },
+    { label: "Okay", emoji: "😐" }, { label: "Good", emoji: "😊" }, { label: "Great", emoji: "🌟" },
+];
+const qualityColors = {
+    "Terrible": "#d9534f", "Poor": "#e8845a", "Okay": "#f0ad4e", "Good": "#81c784", "Great": "#5cb85c",
+};
 
 function getMonthData(year, month) {
     return { firstDay: new Date(year, month, 1).getDay(), daysInMonth: new Date(year, month + 1, 0).getDate() };
 }
-
-function buildSampleEntries(year, month) {
-    const entries = {};
-    const days = new Date(year, month + 1, 0).getDate();
-    for (let d = 1; d <= days; d++) {
-        if (Math.random() > 0.25) {
-            entries[d] = {
-                hours: Math.floor(Math.random() * 6) + 4,
-                wokeUp: Math.random() > 0.4,
-                dreamt: ["Yes","No","Cannot remember"][Math.floor(Math.random() * 3)],
-            };
-        }
-    }
-    return entries;
+function buildEntryMap(entries) {
+    const map = {};
+    entries.forEach(e => { const d = new Date(e.date); map[`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`] = e; });
+    return map;
 }
 
-function MonthView({ year, month, entries, today }) {
+function MonthView({ year, month, entryMap, today, onDayClick }) {
     const { firstDay, daysInMonth } = getMonthData(year, month);
     const cells = [];
     for (let i = 0; i < firstDay; i++) cells.push(null);
     for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-
     return (
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: "6px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "6px" }}>
@@ -43,17 +35,18 @@ function MonthView({ year, month, entries, today }) {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridTemplateRows: `repeat(${Math.ceil(cells.length / 7)}, 1fr)`, gap: "6px", flex: 1 }}>
                 {cells.map((day, i) => {
-                    const entry = day ? entries[day] : null;
+                    const entry = day ? entryMap[`${year}-${month}-${day}`] : null;
                     const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-                    const bg = entry ? getSleepColor(entry.hours) : day ? "rgba(255,255,255,0.06)" : "transparent";
+                    const bg = entry ? (qualityColors[entry.quality] || "#f0ad4e") : day ? "rgba(255,255,255,0.06)" : "transparent";
+                    const qualityObj = entry ? qualityOptions.find(q => q.label === entry.quality) : null;
                     return (
-                        <div key={i} style={{ borderRadius: "10px", background: bg, border: isToday ? "2px solid white" : "1px solid rgba(255,255,255,0.15)", padding: day ? "8px 10px" : 0, boxSizing: "border-box", minHeight: "80px" }}>
+                        <div key={i} onClick={() => day && onDayClick(day - 1)} style={{ borderRadius: "10px", background: bg, border: isToday ? "2px solid white" : "1px solid rgba(255,255,255,0.15)", padding: day ? "8px 10px" : 0, boxSizing: "border-box", minHeight: "80px", cursor: day ? "pointer" : "default" }}>
                             {day && <>
-                                <div style={{ fontWeight: 700, fontSize: "0.9rem", color: entry ? "white" : "inherit", textShadow: entry ? "0 1px 2px rgba(0,0,0,0.4)" : "none", marginBottom: "5px" }} className={entry ? "" : "cal-text"}>{day}</div>
+                                <div className={entry ? "" : "cal-text"} style={{ fontWeight: 700, fontSize: "0.9rem", color: entry ? "white" : "inherit", textShadow: entry ? "0 1px 2px rgba(0,0,0,0.4)" : "none", marginBottom: "5px" }}>{day}</div>
                                 {entry && <div style={{ fontSize: "0.75rem", color: "white", lineHeight: 1.6, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
-                                    <div><strong>Hours:</strong> {entry.hours}</div>
-                                    <div><strong>Woke up:</strong> {entry.wokeUp ? "Yes" : "No"}</div>
-                                    <div><strong>Dreamt:</strong> {entry.dreamt}</div>
+                                    <div>{qualityObj ? qualityObj.emoji : ""} {entry.quality}</div>
+                                    <div>😴 {entry.duration}</div>
+                                    <div>🛏️ {entry.bedtime} → ⏰ {entry.waketime}</div>
                                 </div>}
                             </>}
                         </div>
@@ -64,35 +57,27 @@ function MonthView({ year, month, entries, today }) {
     );
 }
 
-function WeekView({ year, month, entries, today, weekOffset }) {
-    const firstOfMonth = new Date(year, month, 1);
-    const startOfWeek = new Date(firstOfMonth);
-    startOfWeek.setDate(firstOfMonth.getDate() - firstOfMonth.getDay() + weekOffset * 7);
-    const weekDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(startOfWeek); d.setDate(startOfWeek.getDate() + i); return d; });
-
+function WeekView({ year, month, entryMap, today, weekOffset }) {
+    const start = new Date(year, month, 1);
+    start.setDate(1 - start.getDay() + weekOffset * 7);
+    const weekDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return d; });
     return (
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: "6px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "6px" }}>
-                {weekDays.map((d, i) => (
-                    <div key={i} className="cal-day-header" style={{ textAlign: "center", fontWeight: 700, fontSize: "1rem", padding: "10px 0", borderRadius: "8px", border: d.toDateString() === today.toDateString() ? "2px solid white" : "none" }}>
-                        <div>{DAYS_SHORT[i]}</div>
-                        <div style={{ fontSize: "1.3rem" }}>{d.getDate()}</div>
-                    </div>
-                ))}
+                {weekDays.map((d, i) => <div key={i} className="cal-day-header" style={{ textAlign: "center", fontWeight: 700, fontSize: "1rem", padding: "10px 0", borderRadius: "8px", border: d.toDateString() === today.toDateString() ? "2px solid white" : "none" }}><div>{DAYS_SHORT[i]}</div><div style={{ fontSize: "1.3rem" }}>{d.getDate()}</div></div>)}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "6px", flex: 1 }}>
                 {weekDays.map((d, i) => {
-                    const day = d.getMonth() === month ? d.getDate() : null;
-                    const entry = day ? entries[day] : null;
-                    const bg = entry ? getSleepColor(entry.hours) : "rgba(255,255,255,0.06)";
+                    const entry = entryMap[`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`];
+                    const qualityObj = entry ? qualityOptions.find(q => q.label === entry.quality) : null;
                     return (
-                        <div key={i} style={{ borderRadius: "10px", background: bg, padding: "12px 10px", minHeight: "200px", border: "1px solid rgba(255,255,255,0.15)" }}>
-                            {entry && <div style={{ fontSize: "0.85rem", color: "white", lineHeight: 1.7, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
-                                <div><strong>Hours:</strong> {entry.hours}</div>
-                                <div><strong>Woke up:</strong> {entry.wokeUp ? "Yes" : "No"}</div>
-                                <div><strong>Dreamt:</strong> {entry.dreamt}</div>
-                            </div>}
-                            {!entry && day && <div className="cal-text" style={{ fontSize: "0.8rem", opacity: 0.4, marginTop: "8px" }}>No entry</div>}
+                        <div key={i} style={{ borderRadius: "10px", background: entry ? (qualityColors[entry.quality] || "#f0ad4e") : "rgba(255,255,255,0.06)", padding: "12px 10px", minHeight: "200px", border: "1px solid rgba(255,255,255,0.15)" }}>
+                            {entry ? <div style={{ fontSize: "0.85rem", color: "white", lineHeight: 1.7, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>
+                                <div>{qualityObj ? qualityObj.emoji : ""} <strong>{entry.quality}</strong></div>
+                                <div>😴 {entry.duration}</div>
+                                <div>🛏️ {entry.bedtime} → ⏰ {entry.waketime}</div>
+                                {entry.notes && <div style={{ marginTop: "6px", fontStyle: "italic", opacity: 0.9 }}>{entry.notes.slice(0, 80)}{entry.notes.length > 80 ? "..." : ""}</div>}
+                            </div> : <div className="cal-text" style={{ fontSize: "0.8rem", opacity: 0.4, marginTop: "8px" }}>No entry</div>}
                         </div>
                     );
                 })}
@@ -101,31 +86,31 @@ function WeekView({ year, month, entries, today, weekOffset }) {
     );
 }
 
-function DayView({ year, month, entries, today, dayOffset }) {
+function DayView({ year, month, entryMap, today, dayOffset }) {
     const base = new Date(year, month, 1 + dayOffset);
-    const day = base.getDate();
-    const entry = base.getMonth() === month ? entries[day] : null;
+    const entry = entryMap[`${base.getFullYear()}-${base.getMonth()}-${base.getDate()}`];
+    const qualityObj = entry ? qualityOptions.find(q => q.label === entry.quality) : null;
     const isToday = base.toDateString() === today.toDateString();
-
     return (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
             <div className="cal-day-header" style={{ textAlign: "center", padding: "16px", borderRadius: "12px", border: isToday ? "2px solid white" : "none" }}>
                 <div className="cal-text" style={{ fontSize: "1rem", fontWeight: 700 }}>{DAYS[base.getDay()]}</div>
-                <div className="cal-text" style={{ fontSize: "2.5rem", fontWeight: 800 }}>{day}</div>
+                <div className="cal-text" style={{ fontSize: "2.5rem", fontWeight: 800 }}>{base.getDate()}</div>
                 <div className="cal-text" style={{ fontSize: "0.9rem" }}>{MONTH_NAMES[base.getMonth()]} {base.getFullYear()}</div>
             </div>
-            <div style={{ flex: 1, borderRadius: "12px", background: entry ? getSleepColor(entry.hours) : "rgba(255,255,255,0.06)", padding: "24px", border: "1px solid rgba(255,255,255,0.15)", display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ flex: 1, borderRadius: "12px", background: entry ? (qualityColors[entry.quality] || "#f0ad4e") : "rgba(255,255,255,0.06)", padding: "24px", border: "1px solid rgba(255,255,255,0.15)", display: "flex", flexDirection: "column", gap: "12px" }}>
                 {entry ? <>
-                    <p style={{ color: "white", fontSize: "1.1rem", margin: 0, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}><strong>Hours slept:</strong> {entry.hours}</p>
-                    <p style={{ color: "white", fontSize: "1.1rem", margin: 0, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}><strong>Woke up during night:</strong> {entry.wokeUp ? "Yes" : "No"}</p>
-                    <p style={{ color: "white", fontSize: "1.1rem", margin: 0, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}><strong>Dreamt:</strong> {entry.dreamt}</p>
+                    <p style={{ color: "white", fontSize: "1.2rem", margin: 0, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>{qualityObj ? qualityObj.emoji : ""} <strong>{entry.quality} Sleep</strong></p>
+                    <p style={{ color: "white", fontSize: "1rem", margin: 0, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>😴 Total Sleep: {entry.duration}</p>
+                    <p style={{ color: "white", fontSize: "1rem", margin: 0, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>🛏️ Bedtime: {entry.bedtime} → ⏰ Wake: {entry.waketime}</p>
+                    {entry.notes && <p style={{ color: "white", fontSize: "1rem", margin: 0, lineHeight: 1.6, textShadow: "0 1px 2px rgba(0,0,0,0.4)", fontStyle: "italic" }}>"{entry.notes}"</p>}
                 </> : <p className="cal-text" style={{ opacity: 0.5, fontSize: "1rem" }}>No sleep entry for this day.</p>}
             </div>
         </div>
     );
 }
 
-function SleepJournalCalendar({ entries: propEntries }) {
+function SleepJournalCalendar() {
     const navigate = useNavigate();
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
@@ -133,8 +118,18 @@ function SleepJournalCalendar({ entries: propEntries }) {
     const [view, setView] = useState("month");
     const [weekOffset, setWeekOffset] = useState(0);
     const [dayOffset, setDayOffset] = useState(0);
+    const [entryMap, setEntryMap] = useState({});
+    const userId = localStorage.getItem("userId");
 
-    const entries = propEntries || buildSampleEntries(year, month);
+    useEffect(() => {
+        if (userId) {
+            axios.get(`http://localhost:5000/sleep/${userId}`)
+            .then(res => setEntryMap(buildEntryMap(res.data)))
+            .catch(err => console.log(err));
+        }
+    }, [userId]);
+
+    function handleDayClick(offset) { setDayOffset(offset); setView("day"); }
 
     function prevPeriod() {
         if (view === "month") { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); }
@@ -146,7 +141,6 @@ function SleepJournalCalendar({ entries: propEntries }) {
         else if (view === "week") setWeekOffset(w => w + 1);
         else setDayOffset(d => d + 1);
     }
-
     function periodLabel() {
         if (view === "month") return `${MONTH_NAMES[month]} ${year}`;
         if (view === "week") {
@@ -162,27 +156,27 @@ function SleepJournalCalendar({ entries: propEntries }) {
         <div style={{ minHeight: "100vh", width: "100%", boxSizing: "border-box", padding: "32px 40px", fontFamily: "Shrikhand, sans-serif", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
                 <button className="back-btn" onClick={() => navigate("/sleep")}>← Back</button>
-                <h1 className="cal-title home-title" style={{ fontSize: "2rem", margin: 0, flex: 1, textAlign: "center" }}>Journal Your Nightly Sleep — Calendar View</h1>
+                <h1 className="home-title" style={{ fontSize: "2rem", margin: 0, flex: 1, textAlign: "center" }}>Sleep Journal — Calendar View</h1>
                 <div style={{ display: "flex", gap: "8px" }}>
                     {["month","week","day"].map(v => (
-                        <button key={v} className={`cal-view-btn${view === v ? " active" : ""}`} onClick={() => setView(v)}>
+                        <button key={v} className={view === v ? "login-btn" : "back-btn"} style={{ padding: "8px 18px" }} onClick={() => setView(v)}>
                             {v.charAt(0).toUpperCase() + v.slice(1)}
                         </button>
                     ))}
                 </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "24px", marginBottom: "16px" }}>
-                <button className="cal-nav-btn" onClick={prevPeriod}>‹</button>
-                <span className="cal-title" style={{ fontSize: "1.5rem", fontWeight: 800 }}>{periodLabel()}</span>
-                <button className="cal-nav-btn" onClick={nextPeriod}>›</button>
+                <button className="back-btn" onClick={prevPeriod} style={{ fontSize: "1.4rem", padding: "4px 14px" }}>‹</button>
+                <span className="home-title" style={{ fontSize: "1.5rem", margin: 0 }}>{periodLabel()}</span>
+                <button className="back-btn" onClick={nextPeriod} style={{ fontSize: "1.4rem", padding: "4px 14px" }}>›</button>
             </div>
 
-            {view === "month" && <MonthView year={year} month={month} entries={entries} today={today} />}
-            {view === "week" && <WeekView year={year} month={month} entries={entries} today={today} weekOffset={weekOffset} />}
-            {view === "day" && <DayView year={year} month={month} entries={entries} today={today} dayOffset={dayOffset} />}
+            {view === "month" && <MonthView year={year} month={month} entryMap={entryMap} today={today} onDayClick={handleDayClick} />}
+            {view === "week" && <WeekView year={year} month={month} entryMap={entryMap} today={today} weekOffset={weekOffset} />}
+            {view === "day" && <DayView year={year} month={month} entryMap={entryMap} today={today} dayOffset={dayOffset} />}
 
             <div style={{ display: "flex", gap: "16px", marginTop: "20px", justifyContent: "center", paddingBottom: "16px", flexWrap: "wrap" }}>
-                {[{ color: "#5cb85c", label: "7+ hrs (Great)" }, { color: "#f0ad4e", label: "5–6 hrs (Okay)" }, { color: "#d9534f", label: "< 5 hrs (Poor)" }].map(({ color, label }) => (
+                {[{ color: "#5cb85c", label: "Great" }, { color: "#81c784", label: "Good" }, { color: "#f0ad4e", label: "Okay" }, { color: "#e8845a", label: "Poor" }, { color: "#d9534f", label: "Terrible" }].map(({ color, label }) => (
                     <div key={label} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <div style={{ width: "18px", height: "18px", borderRadius: "4px", background: color }} />
                         <span className="cal-legend-label">{label}</span>
