@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const workoutTypes = [
     { label: "Cardio", emoji: "🏃" },
@@ -32,11 +33,19 @@ function WorkoutJournal() {
     const [entries, setEntries] = useState([]);
     const [submitted, setSubmitted] = useState(false);
 
+    const userId = localStorage.getItem("userId");
+
+    useEffect(() => {
+        if (userId) {
+            axios.get(`http://localhost:5000/workout/${userId}`)
+            .then(res => setEntries(res.data))
+            .catch(err => console.log(err))
+        }
+    }, [userId]);
+
     function toggleType(typeLabel) {
         if (selectedTypes.includes(typeLabel)) {
-            setSelectedTypes(selectedTypes.filter(function(t) {
-                return t !== typeLabel;
-            }));
+            setSelectedTypes(selectedTypes.filter(function(t) { return t !== typeLabel; }));
         } else {
             setSelectedTypes([...selectedTypes, typeLabel]);
         }
@@ -56,30 +65,26 @@ function WorkoutJournal() {
             return;
         }
 
-        const today = new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-
         const newEntry = {
-            date: today,
-            types: selectedTypes,
-            duration: duration,
-            intensity: intensity,
+            userId: userId,
+            types: selectedTypes.map(t => ({ name: t })),
+            duration: Number(duration),
+            intensity: intensity.label,
             notes: notes,
         };
 
-        setEntries([newEntry, ...entries]);
-        setSelectedTypes([]);
-        setDuration("");
-        setIntensity(null);
-        setNotes("");
-        setSubmitted(true);
-        setTimeout(function() {
-            setSubmitted(false);
-        }, 3000);
+        axios.post("http://localhost:5000/workout", newEntry)
+        .then(() => axios.get(`http://localhost:5000/workout/${userId}`))
+        .then(res => {
+            setEntries(res.data);
+            setSelectedTypes([]);
+            setDuration("");
+            setIntensity(null);
+            setNotes("");
+            setSubmitted(true);
+            setTimeout(function() { setSubmitted(false); }, 3000);
+        })
+        .catch(err => console.log(err))
     }
 
     return (
@@ -203,32 +208,30 @@ function WorkoutJournal() {
                 <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
                     <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
+                        const intensityObj = intensityOptions.find(o => o.label === entry.intensity);
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
-                                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", margin: 0 }}>{entry.date}</p>
+                                <p className="profile-label">
+                                    {entry.date ? new Date(entry.date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : ""}
+                                </p>
                                 <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                                    {entry.types.map(function(t) {
-                                        let found = null;
-                                        for (let i = 0; i < workoutTypes.length; i++) {
-                                            if (workoutTypes[i].label === t) {
-                                                found = workoutTypes[i];
-                                            }
-                                        }
+                                    {entry.types && entry.types.map(function(t) {
+                                        const found = workoutTypes.find(w => w.label === t.name);
                                         return (
-                                            <span key={t} className="text-color" style={{
+                                            <span key={t.name} className="text-color" style={{
                                                 background: "rgba(255,255,255,0.2)",
                                                 padding: "4px 12px",
                                                 borderRadius: "20px",
                                                 fontSize: "0.85rem",
                                                 fontWeight: 700,
                                             }}>
-                                                {found ? found.emoji : ""} {t}
+                                                {found ? found.emoji : ""} {t.name}
                                             </span>
                                         );
                                     })}
                                 </div>
-                                <p style={{ color: "rgba(255,255,255,0.85)", margin: 0, fontSize: "0.9rem" }}>
-                                    ⏱️ {entry.duration} mins &nbsp;|&nbsp; {entry.intensity.emoji} {entry.intensity.label}
+                                <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
+                                    ⏱️ {entry.duration} mins &nbsp;|&nbsp; {intensityObj ? intensityObj.emoji : ""} {entry.intensity}
                                 </p>
                                 {entry.notes && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.notes}</p>
