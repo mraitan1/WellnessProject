@@ -72,7 +72,7 @@ function DailyJournal() {
         const newEntry = {
             userId: userId,
             mood: selectedMood.label,
-            restedRating: restedRating,
+            restfulness: restfulness,
             journalText: journalText,
             activities: selectedActivities.map(a => ({ name: a })),
         };
@@ -88,18 +88,12 @@ function DailyJournal() {
             setEntries(res.data);
             setSelectedMood(null);
             setSelectedActivities([]);
-            setRestedRating(null);
+            setRestfulness(null);
             setJournalText("");
             setSubmitted(true);
             setTimeout(function() { setSubmitted(false); }, 3000);
         })
         .catch(err => console.log(err))
-            date: today,
-            mood: selectedMood,
-            activities: selectedActivities,
-            restfulness: restfulness,
-            text: journalText,
-        };
 
         setEntries([newEntry, ...entries]);
         setSelectedMood(null);
@@ -267,6 +261,7 @@ function DailyJournal() {
                                 {entry.restedRating && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                         😴 Rested: {entry.restedRating}/5
+                                    </p>)}
                                 {typeof entry.restfulness === "number" && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                         😴 Restfulness: {restfulOptions[entry.restfulness].emoji} {restfulOptions[entry.restfulness].label}
@@ -291,7 +286,7 @@ function DailyJournal() {
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.journalText}</p>
                                 )}
                             </div>
-                        );
+                        )
                     })}
                 </div>
             )}
