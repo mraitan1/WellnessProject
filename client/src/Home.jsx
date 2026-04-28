@@ -35,7 +35,7 @@ function Home() {
                         </div>
                     )}
                 </div>
-                <div className="home-nav-bar">
+                <div className="nav-bar">
                     <div>
                         <h1 className="home-title">Welcome to DayByDay</h1>
                         <p className="home-subtitle">Today is: {todaysDate()}</p>
@@ -43,33 +43,33 @@ function Home() {
                     {navItems.map((item) => (
                         <div
                             key={item.path}
-                            className="home-nav-card"
+                            className="nav-card"
                             onClick={() => navigate(item.path)}
                         >
-                            <span className="home-nav-card-label">{item.label}</span>
-                            <span className="home-nav-card-desc">{item.desc}</span>
+                            <span className="nav-card-label">{item.label}</span>
+                            <span className="nav-card-desc">{item.desc}</span>
                         </div>
                     ))}
                 </div>
-                <div className="home-nav-graph">
-                    <div className="home-nav-card" onClick={() => navigate("/sleep")}>
-                        <span className="home-nav-card-label">Sleep Graph</span>
-                        <span className="home-nav-card-desc"></span>
+                <div className="nav-graph">
+                    <div className="nav-card" onClick={() => navigate("/sleep")}>
+                        <span className="nav-card-label">Sleep Graph</span>
+                        <span className="nav-card-desc"></span>
                     </div>
-                    <div className="home-nav-card" onClick={() => navigate("/journal")}>
-                        <span className="home-nav-card-label">Mood Graph</span>
-                        <span className="home-nav-card-desc"></span>
+                    <div className="nav-card" onClick={() => navigate("/journal")}>
+                        <span className="nav-card-label">Mood Graph</span>
+                        <span className="nav-card-desc"></span>
                     </div>
-                    <div className="home-nav-card" onClick={() => navigate("/workout")}>
-                        <span className="home-nav-card-label">Workout Graph</span>
-                        <span className="home-nav-card-desc"></span>
+                    <div className="nav-card" onClick={() => navigate("/workout")}>
+                        <span className="nav-card-label">Workout Graph</span>
+                        <span className="nav-card-desc"></span>
                     </div>
                 </div>
-                <div className="home-bottom-bar">
-                    <div className="home-nav-card" style={{ gridColumn: '2 / 4' }}>
+                <div className="nav-bottom-bar">
+                    <div className="nav-card" style={{ gridColumn: '2 / 4' }}>
 
                     </div>
-                    <div className="home-nav-card" style={{ gridColumn: '4 / 6' }}>
+                    <div className="nav-card" style={{ gridColumn: '4 / 6' }}>
 
                     </div>
                 </div>
