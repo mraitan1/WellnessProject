@@ -94,27 +94,11 @@ function DailyJournal() {
             setTimeout(function() { setSubmitted(false); }, 3000);
         })
         .catch(err => console.log(err))
-            date: today,
-            mood: selectedMood,
-            activities: selectedActivities,
-            restfulness: restfulness,
-            text: journalText,
-        };
-
-        setEntries([newEntry, ...entries]);
-        setSelectedMood(null);
-        setSelectedActivities([]);
-        setRestfulness(2);
-        setJournalText("");
-        setSubmitted(true);
-        setTimeout(function() {
-            setSubmitted(false);
-        }, 3000);
     }
 
     return (
         <div className="home-container">
-            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
+            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "16px", padding: "24px" }}>
                 <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Daily Journal</h1>
                 <p className="home-subtitle" style={{ marginBottom: 0 }}>How are you doing today?</p>
@@ -248,7 +232,7 @@ function DailyJournal() {
 
             {/* Past Entries */}
             {entries.length > 0 && (
-                <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
+                <div style={{ width: "min(600px, 90vw)", marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
                     <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         const entryDate = entry.date ? new Date(entry.date).toLocaleDateString("en-US", {
@@ -264,9 +248,6 @@ function DailyJournal() {
                                 <p className="journal-entry">
                                     {moodObj ? moodObj.emoji : ""} {entry.mood}
                                 </p>
-                                {entry.restedRating && (
-                                    <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
-                                        😴 Rested: {entry.restedRating}/5
                                 {typeof entry.restfulness === "number" && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                         😴 Restfulness: {restfulOptions[entry.restfulness].emoji} {restfulOptions[entry.restfulness].label}

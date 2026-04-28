@@ -111,7 +111,7 @@ function PersonalGrowth() {
 
     return (
         <div className="home-container">
-            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
+            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "16px", padding: "24px" }}>
                 <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Personal Growth</h1>
                 <p className="home-subtitle" style={{ marginBottom: 0 }}>Track your goals & habits</p>
@@ -264,7 +264,7 @@ function PersonalGrowth() {
 
             {/* Past Entries */}
             {entries.length > 0 && (
-                <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
+                <div style={{ width: "min(600px, 90vw)", marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
                     <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         const progressObj = progressOptions.find(p => p.label === entry.progress);

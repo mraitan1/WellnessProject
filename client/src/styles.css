@@ -17,19 +17,17 @@ html, body, #root {
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
-    gap: 60px;
+    gap: 32px;
 }
 
 .flex-child {
     flex: 1;
     align-items: center;
     justify-content: center;
-    margin-right: 60px;
 }
 
 .flex-child:first-child {
     max-width: 45%;
-    margin-left: 60px;
 }
 
 .logo-img {
