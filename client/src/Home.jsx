@@ -1,6 +1,27 @@
 import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
-import SettingsIcon from "./assets/settings.svg";
+import SettingsIcon from "./assets/profile.svg";
+import { Line } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+} from 'chart.js';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 const navItems = [
     { label: "Journal", path: "/journal", desc: "Log your thoughts & feelings" },
@@ -8,7 +29,7 @@ const navItems = [
     { label: "Workout", path: "/workout", desc: "Monitor your activity" },
     { label: "Personal Growth", path: "/growth", desc: "Track your goals & habits" },
 ];
- 
+
 function Home() {
     const navigate = useNavigate();
     const [settingsOpen, setSettingsOpen] = useState(false);
@@ -52,17 +73,80 @@ function Home() {
                     ))}
                 </div>
                 <div className="nav-graph">
-                    <div className="nav-card" onClick={() => navigate("/sleep")}>
-                        <span className="nav-card-label">Sleep Graph</span>
-                        <span className="nav-card-desc"></span>
-                    </div>
-                    <div className="nav-card" onClick={() => navigate("/journal")}>
+                    <div className="graph-nav-card">
                         <span className="nav-card-label">Mood Graph</span>
-                        <span className="nav-card-desc"></span>
+                        <div style={{ height:'150px', width:"100%", minWidth: 0, overflow: "hidden" }}>
+                            <Line
+                                data={{
+                                    labels: ['Two Days Ago', 'Yesterday', 'Today'],
+                                    datasets: [{
+                                        label: "Mood",
+                                        data: [2, 5, 3],
+                                        fill: false,
+                                        borderColor: 'rgb(75, 192, 192)',
+                                        tension: 0.1
+                                    }]
+                                }}
+                                options={{
+                                    maintainAspectRatio: false,
+                                    responsive: true,
+                                    plugins: {
+                                        legend: { display: false }
+                                    }
+                                }}
+                            />
+                        </div>
+                        <span className="back-btn" onClick={() => navigate("/journal")}>Need to enter your mood?</span>
                     </div>
-                    <div className="nav-card" onClick={() => navigate("/workout")}>
+                    <div className="graph-nav-card">
+                        <span className="nav-card-label">Sleep Graph</span>
+                        <div style={{ height:'150px', width:"100%", minWidth: 0, overflow: "hidden" }}>
+                            <Line
+                                data={{
+                                    labels: ['Two Days Ago', 'Yesterday', 'Today'],
+                                    datasets: [{
+                                        label: "Sleep",
+                                        data: [8, 5, 6],
+                                        fill: false,
+                                        borderColor: 'rgb(75, 192, 192)',
+                                        tension: 0.1
+                                    }]
+                                }}
+                                options={{
+                                    maintainAspectRatio: false,
+                                    responsive: true,
+                                    plugins: {
+                                        legend: { display: false }
+                                    }
+                                }}
+                            />
+                        </div>
+                        <span className="back-btn" onClick={() => navigate("/sleep")}>Need to enter slept hours?</span>
+                    </div>
+                    <div className="graph-nav-card">
                         <span className="nav-card-label">Workout Graph</span>
-                        <span className="nav-card-desc"></span>
+                        <div style={{ height:'150px', width:"100%", minWidth: 0, overflow: "hidden" }}>
+                            <Line
+                                data={{
+                                    labels: ['Two Days Ago', 'Yesterday', 'Today'],
+                                    datasets: [{
+                                        label: "Workout",
+                                        data: [42, 35, 52],
+                                        fill: false,
+                                        borderColor: 'rgb(75, 192, 192)',
+                                        tension: 0.1
+                                    }]
+                                }}
+                                options={{
+                                    maintainAspectRatio: false,
+                                    responsive: true,
+                                    plugins: {
+                                        legend: { display: false }
+                                    }
+                                }}
+                            />
+                        </div>
+                        <span className="back-btn" onClick={() => navigate("/workout")}>Need to enter your workout?</span>
                     </div>
                 </div>
                 <div className="nav-bottom-bar">

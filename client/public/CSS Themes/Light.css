@@ -1,11 +1,14 @@
 :root {
-    margin: 0;
-    padding: 0;
-    height: 100%;
     --bg-color: #ffffff;
     --text-color: #333333;
     --button-bg: #4a90e2;
     --button-text: white;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
     background-color: var(--bg-color);
     color: var(--text-color);
 }
@@ -124,6 +127,7 @@
 }
 
 .home-container {
+    box-sizing: border-box;
     background-color: var(--bg-color);
     display: flex;
     flex-direction: column;
@@ -141,6 +145,7 @@
     padding: 40px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     display: flex;
+    flex: 1;
     flex-direction: column;
     position: relative;
 }
@@ -181,6 +186,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     width: 100%;
+    min-width: 0;
 }
 .nav-bottom-bar {
     margin-top: 20px;
@@ -203,11 +209,31 @@
     cursor: pointer;
     transition: transform 0.2s, background 0.2s;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    min-width: 0;
+    overflow: hidden;
 }
 
 .nav-card:hover {
     transform: translateY(-4px);
     background: rgba(255, 255, 255, 0.3);
+}
+
+.graph-nav-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    min-width: 0;
+    overflow: hidden;
 }
 
 .nav-card-label {
@@ -221,6 +247,16 @@
     font-size: 0.9rem;
     text-align: center;
     color: var(--text-color);
+}
+
+.graph-nav-card-dec{
+    font-size: 0.9rem;
+    text-align: center;
+    color: var(--text-color);
+}
+.graph-nav-card-dec:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .settings-btn {
