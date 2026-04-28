@@ -48,8 +48,8 @@ function DailyJournal() {
     useEffect(() => {
         if (userId) {
             axios.get(`http://localhost:5000/journal/${userId}`)
-            .then(res => setEntries(res.data))
-            .catch(err => console.log(err))
+                .then(res => setEntries(res.data))
+                .catch(err => console.log(err))
         }
     }, [userId]);
 
@@ -72,43 +72,33 @@ function DailyJournal() {
         const newEntry = {
             userId: userId,
             mood: selectedMood.label,
-            restfulness: restfulness,
+            restedRating: restfulness,
             journalText: journalText,
             activities: selectedActivities.map(a => ({ name: a })),
         };
 
         axios.post("http://localhost:5000/journal", newEntry)
-        .then(() => {
-            // Re-fetch all entries from the server so the list is always consistent
-            return axios.get(`http://localhost:5000/journal/${userId}`)
-        })
-        .then(res => {
-            console.log("userId:", userId);
-            console.log("Entries from server:", res.data);
-            setEntries(res.data);
-            setSelectedMood(null);
-            setSelectedActivities([]);
-            setRestfulness(null);
-            setJournalText("");
-            setSubmitted(true);
-            setTimeout(function() { setSubmitted(false); }, 3000);
-        })
-        .catch(err => console.log(err))
-
-        setEntries([newEntry, ...entries]);
-        setSelectedMood(null);
-        setSelectedActivities([]);
-        setRestfulness(2);
-        setJournalText("");
-        setSubmitted(true);
-        setTimeout(function() {
-            setSubmitted(false);
-        }, 3000);
+            .then(() => {
+                // Re-fetch all entries from the server so the list is always consistent
+                return axios.get(`http://localhost:5000/journal/${userId}`)
+            })
+            .then(res => {
+                console.log("userId:", userId);
+                console.log("Entries from server:", res.data);
+                setEntries(res.data);
+                setSelectedMood(null);
+                setSelectedActivities([]);
+                setRestfulness(null);
+                setJournalText("");
+                setSubmitted(true);
+                setTimeout(function() { setSubmitted(false); }, 3000);
+            })
+            .catch(err => console.log(err))
     }
 
     return (
         <div className="home-container">
-            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
+            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "16px", padding: "24px" }}>
                 <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Daily Journal</h1>
                 <p className="home-subtitle" style={{ marginBottom: 0 }}>How are you doing today?</p>
@@ -242,7 +232,7 @@ function DailyJournal() {
 
             {/* Past Entries */}
             {entries.length > 0 && (
-                <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
+                <div style={{ width: "min(600px, 90vw)", marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
                     <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
                         const entryDate = entry.date ? new Date(entry.date).toLocaleDateString("en-US", {
@@ -258,10 +248,6 @@ function DailyJournal() {
                                 <p className="journal-entry">
                                     {moodObj ? moodObj.emoji : ""} {entry.mood}
                                 </p>
-                                {entry.restedRating && (
-                                    <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
-                                        😴 Rested: {entry.restedRating}/5
-                                    </p>)}
                                 {typeof entry.restfulness === "number" && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                         😴 Restfulness: {restfulOptions[entry.restfulness].emoji} {restfulOptions[entry.restfulness].label}
@@ -286,7 +272,7 @@ function DailyJournal() {
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.journalText}</p>
                                 )}
                             </div>
-                        )
+                        );
                     })}
                 </div>
             )}

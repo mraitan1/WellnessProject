@@ -170,7 +170,7 @@ function DailyJournalCalendar() {
     }
 
     return (
-        <div style={{ minHeight: "100vh", width: "100%", boxSizing: "border-box", padding: "32px 40px", fontFamily: "Shrikhand, sans-serif", display: "flex", flexDirection: "column" }}>
+        <div style={{ minHeight: "100vh", width: "100%", boxSizing: "border-box", padding: "16px 20px", fontFamily: "Shrikhand, sans-serif", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
                 <button className="back-btn" onClick={() => navigate("/journal")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "2rem", margin: 0, flex: 1, textAlign: "center" }}>Journal Your Day — Calendar View</h1>
