@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const defaultHabits = [
     "Exercise", "Read", "Meditate", "Drink Water",
@@ -24,6 +25,16 @@ function PersonalGrowth() {
     const [motivationalNote, setMotivationalNote] = useState("");
     const [entries, setEntries] = useState([]);
     const [submitted, setSubmitted] = useState(false);
+
+    const userId = localStorage.getItem("userId");
+
+    useEffect(() => {
+        if (userId) {
+            axios.get(`http://localhost:5000/growth/${userId}`)
+            .then(res => setEntries(res.data))
+            .catch(err => console.log(err))
+        }
+    }, [userId]);
 
     function addGoal() {
         if (!goalInput.trim()) {
@@ -76,35 +87,31 @@ function PersonalGrowth() {
             return;
         }
 
-        const today = new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-
         const newEntry = {
-            date: today,
-            goals: [...goals],
-            habits: [...checkedHabits],
-            progress: progress,
-            note: motivationalNote,
+            userId: userId,
+            goals: goals.map(g => ({ goalText: g.text, done: g.done })),
+            habits: checkedHabits.map(h => ({ name: h })),
+            progress: progress.label,
+            motivationalNote: motivationalNote,
         };
 
-        setEntries([newEntry, ...entries]);
-        setGoals([]);
-        setCheckedHabits([]);
-        setProgress(null);
-        setMotivationalNote("");
-        setSubmitted(true);
-        setTimeout(function() {
-            setSubmitted(false);
-        }, 3000);
+        axios.post("http://localhost:5000/growth", newEntry)
+        .then(() => axios.get(`http://localhost:5000/growth/${userId}`))
+        .then(res => {
+            setEntries(res.data);
+            setGoals([]);
+            setCheckedHabits([]);
+            setProgress(null);
+            setMotivationalNote("");
+            setSubmitted(true);
+            setTimeout(function() { setSubmitted(false); }, 3000);
+        })
+        .catch(err => console.log(err))
     }
 
     return (
         <div className="home-container">
-            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
+            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "16px", padding: "24px" }}>
                 <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Personal Growth</h1>
                 <p className="home-subtitle" style={{ marginBottom: 0 }}>Track your goals & habits</p>
@@ -257,44 +264,47 @@ function PersonalGrowth() {
 
             {/* Past Entries */}
             {entries.length > 0 && (
-                <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
+                <div style={{ width: "min(600px, 90vw)", marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
                     <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
+                        const progressObj = progressOptions.find(p => p.label === entry.progress);
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
-                                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", margin: 0 }}>{entry.date}</p>
+                                <p className="profile-label">
+                                    {entry.date ? new Date(entry.date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : ""}
+                                </p>
                                 <p className="text-color" style={{ fontWeight: 800, fontSize: "1.1rem", margin: 0 }}>
-                                    {entry.progress.emoji} {entry.progress.label}
+                                    {progressObj ? progressObj.emoji : ""} {entry.progress}
                                 </p>
                                 <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%" }}>
-                                    {entry.goals.map(function(g, j) {
+                                    {entry.goals && entry.goals.map(function(g, j) {
                                         return (
                                             <p key={j} className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
-                                                {g.done ? "✅" : "⬜"} {g.text}
+                                                {g.done ? "✅" : "⬜"} {g.goalText}
                                             </p>
                                         );
                                     })}
                                 </div>
-                                {entry.habits.length > 0 && (
+                                {entry.habits && entry.habits.length > 0 && (
                                     <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                                         {entry.habits.map(function(h) {
                                             return (
-                                                <span key={h} className="text-color" style={{
+                                                <span key={h.name} className="text-color" style={{
                                                     background: "rgba(255,255,255,0.2)",
                                                     padding: "4px 12px",
                                                     borderRadius: "20px",
                                                     fontSize: "0.8rem",
                                                     fontWeight: 700,
                                                 }}>
-                                                    ✅ {h}
+                                                    ✅ {h.name}
                                                 </span>
                                             );
                                         })}
                                     </div>
                                 )}
-                                {entry.note && (
+                                {entry.motivationalNote && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5", fontStyle: "italic" }}>
-                                        "{entry.note}"
+                                        "{entry.motivationalNote}"
                                     </p>
                                 )}
                             </div>

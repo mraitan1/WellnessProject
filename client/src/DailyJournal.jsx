@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const moods = [
     { label: "Happy", emoji: "😊" },
@@ -20,6 +21,13 @@ const moods = [
     { label: "Calm", emoji: "😌" },
 ];
 
+const restfulOptions = [
+    { label: "Exhausted", emoji: "😵" },
+    { label: "Sleepy", emoji: "😞" },
+    { label: "Rested", emoji: "😊" },
+    { label: "Well Rested", emoji: "🌟" },
+];
+
 const activities = [
     "School", "Work", "Studying", "Working Out",
     "Hiking", "Friends", "Alone Time", "Movie", "Hobbies"
@@ -30,10 +38,20 @@ function DailyJournal() {
 
     const [selectedMood, setSelectedMood] = useState(null);
     const [selectedActivities, setSelectedActivities] = useState([]);
-    const [restedRating, setRestedRating] = useState(null);
+    const [restfulness, setRestfulness] = useState(2);
     const [journalText, setJournalText] = useState("");
     const [entries, setEntries] = useState([]);
     const [submitted, setSubmitted] = useState(false);
+
+    const userId = localStorage.getItem("userId");
+
+    useEffect(() => {
+        if (userId) {
+            axios.get(`http://localhost:5000/journal/${userId}`)
+            .then(res => setEntries(res.data))
+            .catch(err => console.log(err))
+        }
+    }, [userId]);
 
     function toggleActivity(activity) {
         if (selectedActivities.includes(activity)) {
@@ -51,35 +69,36 @@ function DailyJournal() {
             return;
         }
 
-        const today = new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-
         const newEntry = {
-            date: today,
-            mood: selectedMood,
-            activities: selectedActivities,
-            rested: restedRating,
-            text: journalText,
+            userId: userId,
+            mood: selectedMood.label,
+            restedRating: restedRating,
+            journalText: journalText,
+            activities: selectedActivities.map(a => ({ name: a })),
         };
 
-        setEntries([newEntry, ...entries]);
-        setSelectedMood(null);
-        setSelectedActivities([]);
-        setRestedRating(null);
-        setJournalText("");
-        setSubmitted(true);
-        setTimeout(function() {
-            setSubmitted(false);
-        }, 3000);
+        axios.post("http://localhost:5000/journal", newEntry)
+        .then(() => {
+            // Re-fetch all entries from the server so the list is always consistent
+            return axios.get(`http://localhost:5000/journal/${userId}`)
+        })
+        .then(res => {
+            console.log("userId:", userId);
+            console.log("Entries from server:", res.data);
+            setEntries(res.data);
+            setSelectedMood(null);
+            setSelectedActivities([]);
+            setRestedRating(null);
+            setJournalText("");
+            setSubmitted(true);
+            setTimeout(function() { setSubmitted(false); }, 3000);
+        })
+        .catch(err => console.log(err))
     }
 
     return (
         <div className="home-container">
-            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
+            <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "16px", padding: "24px" }}>
                 <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Daily Journal</h1>
                 <p className="home-subtitle" style={{ marginBottom: 0 }}>How are you doing today?</p>
@@ -114,39 +133,41 @@ function DailyJournal() {
                     </div>
                 </div>
 
-                {/* Rested Rating */}
+                {/* Restful */}
                 <div style={{ width: "100%" }}>
-                    <p className="login-label">How rested do you feel?</p>
-                    <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                        {[1, 2, 3, 4, 5].map(function(n) {
-                            return (
-                                <div
-                                    key={n}
-                                    onClick={() => setRestedRating(n)}
-                                    className="text-color"
-                                    style={{
-                                        cursor: "pointer",
-                                        width: "44px",
-                                        height: "44px",
-                                        borderRadius: "50%",
-                                        background: restedRating === n ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.15)",
-                                        border: restedRating === n ? "2px solid white" : "2px solid transparent",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontWeight: 800,
-                                        fontSize: "1rem",
-                                        transition: "all 0.2s",
-                                    }}
-                                >
-                                    {n}
-                                </div>
-                            );
-                        })}
+                    <p className="login-label">Restfulness</p>
+
+                    <div style={{ textAlign: "center", marginBottom: "8px" }}>
+                        <span style={{ fontSize: "1.8rem" }}>
+                            {restfulOptions[restfulness].emoji}
+                        </span>
+                        <span
+                            className="journal-label"
+                            style={{ marginLeft: "8px" }}
+                        >
+                            {restfulOptions[restfulness].label}
+                        </span>
                     </div>
-                    <p style={{textAlign: "center", marginTop: "6px" }} className="profile-label">
-                        1 = Exhausted &nbsp;|&nbsp; 5 = Well Rested
-                    </p>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span className="journal-label">
+                            {restfulOptions[0].label}
+                        </span>
+
+                        <input
+                            type="range"
+                            min={0}
+                            max={restfulOptions.length - 1}
+                            step={1}
+                            value={restfulness}
+                            onChange={(e) => setRestfulness(Number(e.target.value))}
+                            style={{ width: "100%" }}
+                        />
+
+                        <span className="journal-label">
+                            {restfulOptions[restfulOptions.length - 1].label}
+                        </span>
+                    </div>
                 </div>
 
                 {/* Activity Tags */}
@@ -211,37 +232,44 @@ function DailyJournal() {
 
             {/* Past Entries */}
             {entries.length > 0 && (
-                <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
+                <div style={{ width: "min(600px, 90vw)", marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
                     <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
+                        const entryDate = entry.date ? new Date(entry.date).toLocaleDateString("en-US", {
+                            weekday: "long", year: "numeric", month: "long", day: "numeric"
+                        }) : "No date";
+
+                        // Find the emoji for the mood label
+                        const moodObj = moods.find(m => m.label === entry.mood);
+
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
-                                <p className="profile-label">{entry.date}</p>
+                                <p className="profile-label">{entryDate}</p>
                                 <p className="journal-entry">
-                                    {entry.mood.emoji} {entry.mood.label}
+                                    {moodObj ? moodObj.emoji : ""} {entry.mood}
                                 </p>
-                                {entry.rested && (
+                                {typeof entry.restfulness === "number" && (
                                     <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
-                                        😴 Rested: {entry.rested}/5
+                                        😴 Restfulness: {restfulOptions[entry.restfulness].emoji} {restfulOptions[entry.restfulness].label}
                                     </p>
                                 )}
-                                {entry.activities.length > 0 && (
+                                {entry.activities && entry.activities.length > 0 && (
                                     <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                                         {entry.activities.map(function(a) {
                                             return (
-                                                <span key={a} className="text-color" style={{
+                                                <span key={a.name} className="text-color" style={{
                                                     background: "rgba(255,255,255,0.2)",
                                                     padding: "4px 12px",
                                                     borderRadius: "20px",
                                                     fontSize: "0.8rem",
                                                     fontWeight: 700,
-                                                }}>{a}</span>
+                                                }}>{a.name}</span>
                                             );
                                         })}
                                     </div>
                                 )}
-                                {entry.text && (
-                                    <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.text}</p>
+                                {entry.journalText && (
+                                    <p className="text-color" style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>{entry.journalText}</p>
                                 )}
                             </div>
                         );

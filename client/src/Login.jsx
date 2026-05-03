@@ -18,10 +18,13 @@ function Login() {
         try {
             const result = await axios.post("http://localhost:5000/login", { email, password });
 
-            if (result.data === "Successful login") {
+            if (result.data.status === "Successful login") {
+                // Save the userId and name so any page can access it
+                localStorage.setItem("userId", result.data.userId);
+                localStorage.setItem("userName", result.data.name);
                 navigate("/home");
             } else {
-                setError(result.data);
+                setError(result.data.status);
             }
         } catch (err) {
             setError("Could not connect to the server.");

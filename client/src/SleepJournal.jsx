@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const qualityOptions = [
     { label: "Terrible", emoji: "😵" },
@@ -7,6 +8,13 @@ const qualityOptions = [
     { label: "Okay", emoji: "😐" },
     { label: "Good", emoji: "😊" },
     { label: "Great", emoji: "🌟" },
+];
+
+const restfulOptions = [
+    { label: "Exhausted", emoji: "😵" },
+    { label: "Sleepy", emoji: "😞" },
+    { label: "Rested", emoji: "😊" },
+    { label: "Well Rested", emoji: "🌟" },
 ];
 
 function calculateDuration(bedtime, waketime) {
@@ -42,11 +50,21 @@ function SleepJournal() {
     const [bedtime, setBedtime] = useState("");
     const [waketime, setWaketime] = useState("");
     const [quality, setQuality] = useState(null);
+    const [restfulness, setRestfulness] = useState(2);
     const [notes, setNotes] = useState("");
     const [entries, setEntries] = useState([]);
     const [submitted, setSubmitted] = useState(false);
 
+    const userId = localStorage.getItem("userId");
     const duration = calculateDuration(bedtime, waketime);
+
+    useEffect(() => {
+        if (userId) {
+            axios.get(`http://localhost:5000/sleep/${userId}`)
+            .then(res => setEntries(res.data))
+            .catch(err => console.log(err))
+        }
+    }, [userId]);
 
     function handleSubmit() {
         if (!bedtime || !waketime) {
@@ -58,37 +76,37 @@ function SleepJournal() {
             return;
         }
 
-        const today = new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-
         const newEntry = {
-            date: today,
+            userId: userId,
             bedtime: bedtime,
             waketime: waketime,
             duration: duration,
             quality: quality,
+            restfulness: restfulness,
             notes: notes,
         };
 
-        setEntries([newEntry, ...entries]);
-        setBedtime("");
-        setWaketime("");
-        setQuality(null);
-        setNotes("");
-        setSubmitted(true);
-        setTimeout(function() {
-            setSubmitted(false);
-        }, 3000);
+        axios.post("http://localhost:5000/sleep", newEntry)
+        .then(() => axios.get(`http://localhost:5000/sleep/${userId}`))
+        .then(res => {
+            setEntries(res.data);
+            setBedtime("");
+            setWaketime("");
+            setQuality(null);
+            setNotes("");
+            setSubmitted(true);
+            setTimeout(function() { setSubmitted(false); }, 3000);
+        })
+        .catch(err => console.log(err))
     }
 
     return (
         <div className="home-container">
             <div className="home-card" style={{ width: "min(600px, 90vw)", gap: "24px" }}>
-                <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
+                <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                    <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
+                    <button className="back-btn" onClick={() => navigate("/sleep/calendar")}>📅 View Calendar</button>
+                </div>
                 <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>Sleep Journal</h1>
                 <p className="home-subtitle" style={{ marginBottom: 0 }}>How did you sleep?</p>
 
@@ -162,8 +180,45 @@ function SleepJournal() {
                     </div>
                 </div>
 
-                {/* Notes */}
+                {/* Restful */}
                 <div style={{ width: "100%" }}>
+                    <p className="login-label">Restfulness</p>
+
+                    <div style={{ textAlign: "center", marginBottom: "8px" }}>
+                        <span style={{ fontSize: "1.8rem" }}>
+                            {restfulOptions[restfulness].emoji}
+                        </span>
+                        <span
+                            className="journal-label"
+                            style={{ marginLeft: "8px" }}
+                        >
+                            {restfulOptions[restfulness].label}
+                        </span>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span className="journal-label">
+                            {restfulOptions[0].label}
+                        </span>
+
+                        <input
+                            type="range"
+                            min={0}
+                            max={restfulOptions.length - 1}
+                            step={1}
+                            value={restfulness}
+                            onChange={(e) => setRestfulness(Number(e.target.value))}
+                            style={{ width: "100%" }}
+                        />
+
+                        <span className="journal-label">
+                            {restfulOptions[restfulOptions.length - 1].label}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Notes */}
+                <div style={{width: "100%"}}>
                     <p className="login-label">Notes</p>
                     <textarea
                         value={notes}
@@ -199,11 +254,14 @@ function SleepJournal() {
                 <div style={{ width: "min(600px, 90vw)", marginTop: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
                     <h2 className="text-color" style={{ fontFamily: "arial, sans-serif", textAlign: "center" }}>Past Entries</h2>
                     {entries.map(function(entry, i) {
+                        const qualityObj = qualityOptions.find(q => q.label === entry.quality);
                         return (
                             <div key={i} className="home-card" style={{ alignItems: "flex-start", gap: "12px" }}>
-                                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", margin: 0 }}>{entry.date}</p>
+                                <p className="profile-label">
+                                    {entry.date ? new Date(entry.date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : ""}
+                                </p>
                                 <p className="journal-entry">
-                                    {entry.quality.emoji} {entry.quality.label} Sleep
+                                    {qualityObj ? qualityObj.emoji : ""} {entry.quality} Sleep
                                 </p>
                                 <p className="text-color" style={{ margin: 0, fontSize: "0.9rem" }}>
                                     🛏️ {entry.bedtime} → ⏰ {entry.waketime} &nbsp;|&nbsp; 😴 {entry.duration}
