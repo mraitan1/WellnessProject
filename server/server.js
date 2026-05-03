@@ -6,6 +6,9 @@ const DailyJournalModel = require('./models/DailyJournal');
 const SleepJournalModel = require('./models/SleepJournal');
 const WorkoutJournalModel = require('./models/WorkoutJournal');
 const PersonalGrowthModel = require('./models/PersonalGrowth');
+const userRoutes = require('./routes/userRoutes');
+const dailyJournalRoutes = require('./routes/dailyJournalRoutes');
+const sleepJournalRoutes = require('./routes/sleepJournalRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -13,6 +16,9 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
+app.use('/api/users', userRoutes);
+app.use('/api/journal', dailyJournalRoutes);
+app.use('/api/sleep', sleepJournalRoutes);
 
 console.log(process.env.MONGO_URI)
 mongoose.connect(process.env.MONGO_URI)
@@ -42,6 +48,19 @@ app.post('/signup', (req, res) => {
     .then(user => res.json({status: "Success", userId: user._id, name: user.name}))
     .catch(err => res.json(err))
 })
+
+// Test to verify the server can fetch all user records
+app.get('/test', async (req, res) => {
+    try {
+        //get every user document from the database
+        const users = await UserModel.find();
+        //return the result as JSON.
+        res.json(users);
+    } catch (err) {
+        //return a 500 error with the message
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // ── Daily Journal ─────────────────────────────────────────────
 // Save a new daily journal entry
