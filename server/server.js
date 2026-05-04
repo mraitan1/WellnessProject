@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const UserModel = require('./models/User');
+const Workout = require('./models/Workout');
 require('dotenv').config();
 
 const app = express();
@@ -36,6 +37,20 @@ app.post('/signup', (req, res) => {
     .then(user => {res.json("Success")})
     .catch(err => res.json(err))
 })
+
+app.post('/workouts', async (req, res) => {
+    try {
+        console.log("Workout body received:", req.body);
+
+        const workout = await Workout.create(req.body);
+
+        console.log("Workout saved:", workout);
+        res.json(workout);
+    } catch (err) {
+        console.error("Workout route error:", err);
+        res.status(500).json({ message: err.message });
+    }
+});
 
 app.listen(port, () =>{
   console.log('Server running on port: ' + port);
