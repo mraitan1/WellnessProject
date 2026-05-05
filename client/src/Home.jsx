@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import SettingsIcon from "./assets/profile.svg";
 import { Line } from "react-chartjs-2";
-import { getDailyQuote} from "./assets/tempQuotes.js";
+import { getDailyQuote } from "./assets/tempQuotes.js";
 import {
     Chart as ChartJS,
     CategoryScale,
