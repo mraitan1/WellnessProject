@@ -7,7 +7,7 @@ import SleepJournal from './SleepJournal.jsx'
 import WorkoutJournal from './WorkoutJournal.jsx'
 import PersonalGrowth from './PersonalGrowth.jsx'
 import Profile from './Profile.jsx'
-import themes from './Themes.jsx'
+import './assets/Styles.css'
 import DailyJournalCalendar from './DailyJournalCalendar.jsx'
 import SleepJournalCalendar from './SleepJournalCalendar.jsx'
 import WorkoutJournalCalendar from './WorkoutJournalCalendar.jsx'
@@ -16,24 +16,8 @@ import {useEffect, useState} from "react";
 function App() {
     const [theme, setTheme] = useState("light");
 
-    function applyTheme(themeName) {
-        const existing = document.getElementById("theme-stylesheet");
-
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.id = "theme-stylesheet-new";
-        link.href = `../public/CSS Themes/${themeName}.css`;
-
-        link.onload = () => {
-            if (existing) existing.remove();
-            link.id = "theme-stylesheet";
-        };
-
-        document.head.appendChild(link);
-    }
-
     useEffect(() => {
-        applyTheme(theme);
+        document.documentElement.setAttribute("data-theme", theme);
     }, [theme]);
 
     return (

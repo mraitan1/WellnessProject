@@ -93,8 +93,8 @@ function PersonalGrowth() {
     useEffect(() => {
         if (userId) {
             axios.get(`http://localhost:5000/growth/${userId}`)
-            .then(res => setEntries(res.data))
-            .catch(err => console.log(err));
+                .then(res => setEntries(res.data))
+                .catch(err => console.log(err));
         }
     }, [userId]);
 
@@ -133,17 +133,17 @@ function PersonalGrowth() {
         };
 
         axios.post("http://localhost:5000/growth", newEntry)
-        .then(() => axios.get(`http://localhost:5000/growth/${userId}`))
-        .then(res => {
-            setEntries(res.data);
-            setGoals([]);
-            setCheckedHabits([]);
-            setProgress(null);
-            setMotivationalNote("");
-            setSubmitted(true);
-            setTimeout(() => setSubmitted(false), 3000);
-        })
-        .catch(err => console.log(err));
+            .then(() => axios.get(`http://localhost:5000/growth/${userId}`))
+            .then(res => {
+                setEntries(res.data);
+                setGoals([]);
+                setCheckedHabits([]);
+                setProgress(null);
+                setMotivationalNote("");
+                setSubmitted(true);
+                setTimeout(() => setSubmitted(false), 3000);
+            })
+            .catch(err => console.log(err));
     }
 
     return (
