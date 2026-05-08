@@ -1,8 +1,12 @@
 import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import SettingsIcon from "./assets/profile.svg";
-import { Line } from "react-chartjs-2";
+
+// Temporary quote generator
 import { getDailyQuote } from "./assets/tempQuotes.js";
+
+// Chart generation done through use of ChartJS
+import { Line } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -24,6 +28,7 @@ ChartJS.register(
     Legend
 );
 
+// List of accessible tabs in the main dashboard
 const navItems = [
     { label: "Journal", path: "/journal", desc: "Log your thoughts & feelings" },
     { label: "Sleep", path: "/sleep", desc: "Track your sleep schedule" },
@@ -33,19 +38,12 @@ const navItems = [
 
 function Home() {
     const navigate = useNavigate();
-    const [settingsOpen, setSettingsOpen] = useState(false);
-    const [chartTextColor, setChartTextColor] = useState("#333");
-    const daily = getDailyQuote();
 
-    function handleLogout() {
-        navigate("/login");
-    }
-    function handleProfile(){
-        navigate("/profile");
-    }
-    function todaysDate(){
-         return new Date().toLocaleDateString();
-    }
+    // State monitors whether Settings are being accessed
+    const [settingsOpen, setSettingsOpen] = useState(false);
+
+    // Quote Generation
+    const daily = getDailyQuote();
     function getQuote(){
         return daily.text;
     }
@@ -53,11 +51,36 @@ function Home() {
         return daily.author;
     }
 
+    // Handling for navigation at the settings icon
+    function handleLogout() {
+        navigate("/login");
+    }
+    function handleProfile(){
+        navigate("/profile");
+    }
+
+    // Returns current Date
+    function todaysDate(){
+         return new Date().toLocaleDateString();
+    }
+
+    // Chart manipulation area, changing colors for the graph
+    const [chartTextColor, setChartTextColor] = useState("#333");
+    const [lineColor, setLineColor] = useState("#4A90E2");
+
+    // Pulls colors from existing CSS values
     React.useEffect(() => {
         const color = getComputedStyle(document.documentElement)
             .getPropertyValue('--text-color').trim();
         if (color) {
             setChartTextColor(color);
+        }
+    }, []);
+    React.useEffect(() => {
+        const color = getComputedStyle(document.documentElement)
+            .getPropertyValue('--line-color').trim();
+        if (color) {
+            setLineColor(color);
         }
     }, []);
 
@@ -126,7 +149,7 @@ function Home() {
                                         label: "Mood",
                                         data: [2, 5, 3],
                                         fill: false,
-                                        borderColor: 'rgb(75, 192, 192)',
+                                        borderColor: lineColor,
                                         tension: 0.1
                                     }]
                                 }}
@@ -145,7 +168,7 @@ function Home() {
                                         label: "Sleep",
                                         data: [8, 5, 6],
                                         fill: false,
-                                        borderColor: 'rgb(75, 192, 192)',
+                                        borderColor: lineColor,
                                         tension: 0.1
                                     }]
                                 }}
@@ -164,7 +187,7 @@ function Home() {
                                         label: "Workout",
                                         data: [42, 35, 52],
                                         fill: false,
-                                        borderColor: 'rgb(75, 192, 192)',
+                                        borderColor: lineColor,
                                         tension: 0.1
                                     }]
                                 }}

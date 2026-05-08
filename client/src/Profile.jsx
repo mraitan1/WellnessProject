@@ -54,6 +54,7 @@ function Profile({setTheme, theme}) {
         setEditing(true);
     }
 
+    //handles the embedded theme switching
     function handleThemeChange(e) {
         setTheme(e.target.value);
     }
@@ -69,7 +70,6 @@ function Profile({setTheme, theme}) {
                 margin: "0 auto",
                 alignItems: "stretch"
             }}>
-                {/*<button className="back-btn" onClick={() => navigate("/home")}>← Back</button>*/}
                 <div className="home-card" style={{ gap: "24px", justifyContent: "flex-start", height: "80%", marginTop: "50px" }}>
                     <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
                     <h1 className="home-title" style={{ fontSize: "2.5rem", marginBottom: 0 }}>My Profile</h1>
@@ -164,6 +164,7 @@ function Profile({setTheme, theme}) {
                                 <button className="login-btn" onClick={handleEditClick} style={{ marginTop: "8px" }}>
                                     ✏️ Edit Profile
                                 </button>
+                                {/*Theme switching occurs here, users select option from drop down which is then passed to App.jsx*/}
                                 <select className="theme-switcher" style={{ marginTop: "8px" }} onChange={handleThemeChange} value={theme}>
                                     <option value="light">Light</option>
                                     <option value="dark">Dark</option>

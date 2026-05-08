@@ -1,3 +1,5 @@
+// Quotes provided by Trevor
+
 const quotes = [
     { text: "We suffer more often in imagination than in reality.", author: "Seneca" },
     { text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius" },
@@ -57,9 +59,9 @@ const quotes = [
     { text: "It is a rough road that leads to the heights of greatness.", author: "Seneca" },
 ];
 
+//Returns a singular quote, selected by creating a number out of the date and then using modulo on the array
 export function getDailyQuote() {
     const now = new Date();
-    // Create a number from the date: e.g. 20260501
     const seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
     return quotes[seed % quotes.length];
 }

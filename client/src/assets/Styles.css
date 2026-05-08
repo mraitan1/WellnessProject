@@ -1,3 +1,4 @@
+/*Default Theme*/
 :root {
     --bg-color: #ffffff;
     --text-color: #333333;
@@ -5,11 +6,13 @@
     --button-text: white;
 }
 
+/*Various Themes*/
 [data-theme="light"] {
     --bg-color: #ffffff;
     --text-color: #333333;
     --button-bg: #4a90e2;
     --button-text: white;
+    --line-color: #4a90e2;
 }
 
 [data-theme="dark"] {
@@ -17,6 +20,7 @@
     --text-color: #f0f0f0;
     --button-bg: #a1a0a0;
     --button-text: #1a1a1a;
+    --line-color: #f0f0f0;
 }
 
 [data-theme="forest"] {
@@ -24,6 +28,7 @@
     --text-color: #f0f0f0;
     --button-bg: #7cdc7c;
     --button-text: #1a1a1a;
+    --line-color: #15f315;
 }
 
 [data-theme="sky"] {
@@ -31,8 +36,10 @@
     --text-color: #ffffff;
     --button-bg: #c7c7c7;
     --button-text: #000000;
+    --line-color: #ffffff;
 }
 
+/*Fills screen*/
 html, body {
     margin: 0;
     padding: 0;
@@ -41,6 +48,7 @@ html, body {
     color: var(--text-color);
 }
 
+/*Method of containing elements*/
 .flex-container {
     display: flex;
     align-items: center;
@@ -67,6 +75,7 @@ html, body {
     height: auto;
 }
 
+/*Login Specific CSS*/
 .login-title {
     font-size: 4rem;
     font-weight: 800;
@@ -137,6 +146,7 @@ html, body {
     color: var(--button-bg);
 }
 
+/*Creates a slightly opaque back drop for texture and styling*/
 #divTrans {
     border-radius: 20px;
     background: rgba(0, 0, 0, 0.1);
@@ -149,11 +159,13 @@ html, body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
+/*Sets the font to be used globally*/
 @font-face {
     font-family: 'arial';
     src: url('fonts/arial.ttf');
 }
 
+/*Main container for all pages, subsequent CSS almost always affects elements in this container*/
 .home-container {
     box-sizing: border-box;
     background-color: var(--bg-color);
@@ -178,6 +190,7 @@ html, body {
     position: relative;
 }
 
+/*Titles for the entire container, specific areas, and labels of some nav items*/
 .home-title {
     font-size: 2rem;
     font-weight: 800;
@@ -201,6 +214,8 @@ html, body {
     text-align: left;
     color: var(--text-color);
 }
+
+/*Nav staging for Home specifically*/
 .nav-bar {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -223,6 +238,8 @@ html, body {
     gap: 20px;
     width: 100%;
 }
+
+/*Main navigable interface*/
 .nav-card {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
@@ -246,6 +263,7 @@ html, body {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/*Specific nav card for graphs and charts*/
 .graph-nav-card {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
@@ -287,6 +305,7 @@ html, body {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/*Settings button CSS*/
 .settings-btn {
     position: fixed;
     top: 10px;
@@ -335,6 +354,7 @@ html, body {
     height: 32px;
 }
 
+/*Back Button CSS*/
 .back-btn {
     background: var(--button-bg);
     border: none;
@@ -353,6 +373,7 @@ html, body {
     opacity: 0.5;
 }
 
+/*Unique Theme Switcher CSS, ensure legibility and display possible theme choices*/
 .theme-switcher {
     outline: none;
     padding: 0.8rem 1.5rem;
@@ -373,6 +394,7 @@ html, body {
     border-radius: 12px;
 }
 
+/*Journal entry CSS*/
 .journal-entry {
     color: var(--text-color);
     font-weight: 800;
@@ -386,6 +408,7 @@ html, body {
     font-weight: 700;
 }
 
+/*Profile CSS*/
 .profile-update {
     color: var(--text-color);
     font-weight: 700;
@@ -399,6 +422,7 @@ html, body {
     margin: 0;
 }
 
+/*More niche CSS, i.e. for very specific usages*/
 .text-color {
     color: var(--text-color);
 }

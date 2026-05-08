@@ -14,8 +14,10 @@ import WorkoutJournalCalendar from './WorkoutJournalCalendar.jsx'
 import {useEffect, useState} from "react";
 
 function App() {
+    // Establishes default theme as light
     const [theme, setTheme] = useState("light");
 
+    //Changes theme based on what is returned from Profile
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", theme);
     }, [theme]);
