@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const UserModel = require('./models/User');
 const Workout = require('./models/Workout');
+const PersonalGrowth = require('./models/PersonalGrowth');
 require('dotenv').config();
 
 const app = express();
@@ -51,6 +52,12 @@ app.post('/workouts', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+app.post('/personalgrowth', (req, res) => {
+    PersonalGrowth.create(req.body)
+    .then(entry => res.json(entry))
+    .catch(err => res.json(err))
+})
 
 app.listen(port, () =>{
   console.log('Server running on port: ' + port);
