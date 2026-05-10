@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "./api";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S"];
@@ -137,7 +137,7 @@ function DailyJournalCalendar() {
 
     useEffect(() => {
         if (userId) {
-            axios.get(`http://localhost:5000/journal/${userId}`)
+            api.get(`/journal/${userId}`)
             .then(res => setEntryMap(buildEntryMap(res.data)))
             .catch(err => console.log(err));
         }
@@ -170,7 +170,7 @@ function DailyJournalCalendar() {
     }
 
     return (
-        <div style={{ minHeight: "100vh", width: "100%", boxSizing: "border-box", padding: "16px 20px", fontFamily: "Shrikhand, sans-serif", display: "flex", flexDirection: "column" }}>
+        <div style={{ minHeight: "100vh", width: "100%", boxSizing: "border-box", padding: "32px 40px", fontFamily: "Shrikhand, sans-serif", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
                 <button className="back-btn" onClick={() => navigate("/journal")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "2rem", margin: 0, flex: 1, textAlign: "center" }}>Journal Your Day — Calendar View</h1>

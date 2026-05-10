@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "./api";
 
 const qualityOptions = [
     { label: "Terrible", emoji: "😵" },
@@ -122,7 +122,7 @@ function SleepJournal() {
 
     useEffect(() => {
         if (userId) {
-            axios.get(`http://localhost:5000/sleep/${userId}`)
+            api.get(`/sleep/${userId}`)
             .then(res => setEntries(res.data))
             .catch(err => console.log(err))
         }
@@ -148,8 +148,8 @@ function SleepJournal() {
             notes: notes,
         };
 
-        axios.post("http://localhost:5000/sleep", newEntry)
-        .then(() => axios.get(`http://localhost:5000/sleep/${userId}`))
+        api.post("/sleep", newEntry)
+        .then(() => api.get(`/sleep/${userId}`))
         .then(res => {
             setEntries(res.data);
             setBedtime("");
@@ -422,4 +422,3 @@ function SleepJournal() {
 }
 
 export default SleepJournal;
-

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "./api";
 
 const moods = [
     { label: "Happy", emoji: "😊" },
@@ -90,9 +90,15 @@ function DailyJournal() {
 
     useEffect(() => {
         if (userId) {
-            axios.get(`http://localhost:5000/journal/${userId}`)
+            api.get(`/journal/${userId}`)
                 .then(res => setEntries(res.data))
                 .catch(err => console.log(err))
+        }
+        // If user came from the home page quick note, pre-fill the journal text
+        const quickNote = localStorage.getItem("quickNote");
+        if (quickNote) {
+            setJournalText(quickNote);
+            localStorage.removeItem("quickNote");
         }
     }, [userId]);
 
@@ -120,10 +126,10 @@ function DailyJournal() {
             activities: selectedActivities.map(a => ({ name: a })),
         };
 
-        axios.post("http://localhost:5000/journal", newEntry)
+        api.post("/journal", newEntry)
             .then(() => {
                 // Re-fetch all entries from the server so the list is always consistent
-                return axios.get(`http://localhost:5000/journal/${userId}`)
+                return api.get(`/journal/${userId}`)
             })
             .then(res => {
                 console.log("userId:", userId);
@@ -131,7 +137,7 @@ function DailyJournal() {
                 setEntries(res.data);
                 setSelectedMood(null);
                 setSelectedActivities([]);
-                setRestfulness(null);
+                setRestfulness(0);
                 setJournalText("");
                 setSubmitted(true);
                 setTimeout(function() { setSubmitted(false); }, 3000);
@@ -146,7 +152,7 @@ function DailyJournal() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
                 <button className="back-btn" onClick={() => navigate("/home")}>← Back</button>
                 <h1 className="home-title" style={{ fontSize: "1.8rem", margin: 0 }}>📓 Daily Journal</h1>
-                <div style={{ width: "80px" }} />
+                <button className="back-btn" onClick={() => navigate("/journal/calendar")}>📅 Calendar</button>
             </div>
 
             {/* Main 2-column grid */}

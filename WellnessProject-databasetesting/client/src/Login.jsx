@@ -19,7 +19,7 @@ function Login() {
             const result = await axios.post("http://localhost:5000/login", { email, password });
 
             if (result.data.status === "Successful login") {
-                // Save the userId and name so any page can access it
+                localStorage.setItem("token", result.data.token);
                 localStorage.setItem("userId", result.data.userId);
                 localStorage.setItem("userName", result.data.name);
                 navigate("/home");

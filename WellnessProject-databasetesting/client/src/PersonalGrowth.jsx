@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "./api";
 
 const defaultHabits = [
     "Exercise", "Read", "Meditate", "Drink Water",
@@ -92,7 +92,7 @@ function PersonalGrowth() {
 
     useEffect(() => {
         if (userId) {
-            axios.get(`http://localhost:5000/growth/${userId}`)
+            api.get(`/growth/${userId}`)
                 .then(res => setEntries(res.data))
                 .catch(err => console.log(err));
         }
@@ -132,8 +132,8 @@ function PersonalGrowth() {
             motivationalNote,
         };
 
-        axios.post("http://localhost:5000/growth", newEntry)
-            .then(() => axios.get(`http://localhost:5000/growth/${userId}`))
+        api.post("/growth", newEntry)
+            .then(() => api.get(`/growth/${userId}`))
             .then(res => {
                 setEntries(res.data);
                 setGoals([]);
