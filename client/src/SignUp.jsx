@@ -19,7 +19,9 @@ function Signup() {
         try {
             const result = await axios.post("http://localhost:5000/signup", { name, email, password });
 
-            if (result.data === "Success") {
+            if (result.data.status === "Success") {
+                localStorage.setItem("userId", result.data.userId);
+                localStorage.setItem("userName", result.data.name);
                 navigate("/home");
             } else {
                 setError("Signup failed. Please review your information.");
