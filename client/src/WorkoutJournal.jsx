@@ -35,8 +35,6 @@ function WorkoutJournal() {
 
     const userId = localStorage.getItem("userId");
 
-
-
     useEffect(() => {
         if (userId) {
             api.get(`/workout/${userId}`)
