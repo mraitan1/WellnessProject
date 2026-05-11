@@ -44,8 +44,10 @@ function GoalLineChart({ data }) {
     const plotH = h - padY * 2 - 14;
 
     const pts = data.map(function(d, i) {
+        const xMultiplier = data.length > 1 ? (i / (data.length - 1)) : 0.5;
+
         return {
-            x: padX + (i / (data.length - 1)) * plotW,
+            x: padX + xMultiplier * plotW,
             y: padY + plotH - (d.avg / maxVal) * plotH,
         };
     });
